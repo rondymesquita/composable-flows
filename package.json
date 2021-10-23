@@ -1,16 +1,16 @@
 {
-  "name": "node-typescript-template",
+  "name": "composable-flows",
   "version": "1.0.0",
   "description": "",
   "main": "./dist/index.js",
   "bin": {
-    "node-typescript-template": "./dist/index.js"
+    "composable-flows": "./dist/index.js"
   },
   "files": [
     "dist/**/*"
   ],
   "scripts": {
-    "test": "jest",
+    "test": "jest --watchAll",
     "dev": "nodemon -w ./src ./src/index.ts",
     "build": "tsc"
   },
