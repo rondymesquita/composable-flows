@@ -1,9 +1,26 @@
+export enum Mode {
+  STOP_ON_ERROR = 'STOP_ON_ERROR',
+  CONTINE_ON_ERROR = 'CONTINE_ON_ERROR',
+}
+
+class Options {
+  mode: Mode
+}
+
+const isOptionsInstance = (value: any) => {
+  return 'mode' in value
+}
 export class Compose {
   private stages: Array<Function> = []
+  private options: Options
 
-  constructor(stages?: Array<Function>) {
-    if (stages) {
-      this.stages = stages
+  constructor(param?: Array<Function> | Options, options?: Options) {
+    if (param && param instanceof Array) {
+      this.stages = param
+    }
+
+    if (param && isOptionsInstance(param)) {
+      this.options = param as Options
     }
   }
 
