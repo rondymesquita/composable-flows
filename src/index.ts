@@ -1,9 +1,11 @@
+import { makeExecutor } from './executor/executor.factory'
+import { IStageExecutor } from './executor/istage-executor'
 export enum Mode {
   STOP_ON_ERROR = 'STOP_ON_ERROR',
   CONTINE_ON_ERROR = 'CONTINE_ON_ERROR',
 }
 
-class Options {
+export class Options {
   stopOnError: boolean
 }
 
@@ -12,29 +14,12 @@ const DEFAULT_OPTIONS: Options = {
 }
 
 const isOptionsInstance = (value: any) => {
-  return 'mode' in value
-}
-
-class StageExecutor {
-  constructor(private readonly options: Options) {}
-  async execute(stage: Function, param: any): Promise<any> {
-    let stageResult: any
-    if (this.options.stopOnError) {
-      stageResult = (await stage(param)) as any
-    } else {
-      try {
-        stageResult = (await stage(param)) as any
-      } catch (err) {
-        console.error(err)
-      }
-    }
-    return stageResult
-  }
+  return 'stopOnError' in value
 }
 export class Compose {
   private stages: Array<Function> = []
   private options: Options
-  private stageExecutor: StageExecutor
+  private stageExecutor: IStageExecutor
 
   constructor(
     param?: Array<Function> | Options,
@@ -50,7 +35,7 @@ export class Compose {
       this.options = options
     }
 
-    this.stageExecutor = new StageExecutor(this.options)
+    this.stageExecutor = makeExecutor(this.options)
   }
 
   push(stage: Function) {
