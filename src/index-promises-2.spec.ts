@@ -1,43 +1,42 @@
 import { Compose, Mode } from '.'
 
 describe('Compose', () => {
-  it.only('should call stages when stages are promises', async () => {
+  it.only('should continue the pipeline on stage fail when stopOnError is false', async () => {
     const callOrder: Array<string> = []
     const syncStageAlpha = {
       handle: jest.fn().mockImplementation(() => {
         callOrder.push('syncStageAlpha')
-        return Promise.resolve()
+        return Promise.reject(new Error('alpha stage error'))
       }),
     }
 
     const syncStageBeta = {
       handle: jest.fn().mockImplementation(() => {
         callOrder.push('syncStageBeta')
-        return Promise.resolve()
+        return Promise.resolve('beta-result')
       }),
     }
 
-    const param = 'email@email.com'
-
     const options = {
-      mode: Mode.CONTINE_ON_ERROR,
+      stopOnError: false,
     }
     const sut = new Compose(
       [syncStageAlpha.handle, syncStageBeta.handle],
       options,
     )
 
-    const sut2 = new Compose(options)
+    expect(syncStageAlpha.handle).toBeCalledTimes(0)
+    expect(syncStageBeta.handle).toBeCalledTimes(0)
 
-    // expect(syncStageAlpha.handle).toBeCalledTimes(0)
-    // expect(syncStageBeta.handle).toBeCalledTimes(0)
-    // await sut.execute(param)
+    const param = 'email@email.com'
+    const result = await sut.execute(param)
+    expect(result).toEqual('beta-result')
 
-    // expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    // expect(syncStageAlpha.handle).toBeCalledWith(param)
+    expect(syncStageAlpha.handle).toBeCalledTimes(1)
+    expect(syncStageAlpha.handle).toBeCalledWith(param)
 
-    // expect(syncStageBeta.handle).toBeCalledTimes(1)
-    // expect(syncStageBeta.handle).toBeCalledWith(param)
+    expect(syncStageBeta.handle).toBeCalledTimes(1)
+    expect(syncStageBeta.handle).toBeCalledWith(param)
 
     // expect(callOrder).toEqual(['syncStageAlpha', 'syncStageBeta'])
   })
