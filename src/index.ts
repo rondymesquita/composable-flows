@@ -1,7 +1,5 @@
-import { IComposeExecutor } from './compose/contracts/icompose-executor'
-import { makeStageExecutor } from './stage/stage-executor.factory'
-import { makeComposeExecutor } from './compose/compose.factory'
-import { IStageExecutor } from './stage/contracts/istage-executor'
+import { IComposeExecutor, makeComposeExecutor } from './compose'
+import { makeStageExecutor, IStageExecutor } from './stage'
 
 export enum Mode {
   PIPELINE = 'PIPELINE',
