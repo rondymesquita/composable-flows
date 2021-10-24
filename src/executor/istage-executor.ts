@@ -1,3 +1,3 @@
 export interface IStageExecutor {
-  execute(stage: Function, param: any): Promise<any>
+  execute(stage: Function, params: any): Promise<any>
 }

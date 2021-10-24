@@ -42,10 +42,10 @@ describe('Compose', () => {
     await sut.execute(param)
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith(param)
+    expect(syncStageAlpha.handle).toBeCalledWith([param])
 
     expect(syncStageBeta.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledWith(param)
+    expect(syncStageBeta.handle).toBeCalledWith([param])
 
     expect(callOrder).toEqual(['syncStageAlpha', 'syncStageBeta'])
   })
@@ -73,10 +73,10 @@ describe('Compose', () => {
     await sut.execute(param)
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith(param)
+    expect(syncStageAlpha.handle).toBeCalledWith([param])
 
     expect(syncStageBeta.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledWith(param)
+    expect(syncStageBeta.handle).toBeCalledWith([param])
 
     expect(callOrder).toEqual(['syncStageAlpha', 'syncStageBeta'])
   })
@@ -115,8 +115,31 @@ describe('Compose', () => {
     await expect(sut.execute(param)).rejects.toEqual(new Error('stage error'))
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith(param)
+    expect(syncStageAlpha.handle).toBeCalledWith([param])
 
     expect(syncStageBeta.handle).not.toBeCalled()
+  })
+
+  it('should pass multiples parameters for the stage', async () => {
+    const syncStageAlpha = {
+      handle: jest.fn().mockReturnValue('alpha-result'),
+    }
+
+    const syncStageBeta = {
+      handle: jest.fn().mockReturnValue('beta-result'),
+    }
+
+    const sut = new Compose([syncStageAlpha.handle, syncStageBeta.handle])
+
+    const paramA = 'first param'
+    const paramB = 'first param'
+    const result = await sut.execute(paramA, paramB)
+    expect(result).toEqual('beta-result')
+
+    expect(syncStageAlpha.handle).toBeCalledTimes(1)
+    expect(syncStageAlpha.handle).toBeCalledWith([paramA, paramB])
+
+    expect(syncStageBeta.handle).toBeCalledTimes(1)
+    expect(syncStageBeta.handle).toBeCalledWith([paramA, paramB])
   })
 })

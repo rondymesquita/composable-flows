@@ -26,10 +26,10 @@ describe('Compose', () => {
     await sut.execute(param)
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith(param)
+    expect(syncStageAlpha.handle).toBeCalledWith([param])
 
     expect(syncStageBeta.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledWith(param)
+    expect(syncStageBeta.handle).toBeCalledWith([param])
 
     expect(callOrder).toEqual(['syncStageAlpha', 'syncStageBeta'])
   })
@@ -58,10 +58,10 @@ describe('Compose', () => {
     await sut.execute(param)
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith(param)
+    expect(syncStageAlpha.handle).toBeCalledWith([param])
 
     expect(syncStageBeta.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledWith(param)
+    expect(syncStageBeta.handle).toBeCalledWith([param])
 
     expect(callOrder).toEqual(['syncStageAlpha', 'syncStageBeta'])
   })

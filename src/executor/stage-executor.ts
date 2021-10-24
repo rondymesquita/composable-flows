@@ -1,7 +1,7 @@
 import { IStageExecutor } from './istage-executor'
 export class StageExecutor implements IStageExecutor {
-  async execute(stage: Function, param: any): Promise<any> {
-    const stageResult = (await stage(param)) as any
+  async execute(stage: Function, params: any): Promise<any> {
+    const stageResult = (await stage(params)) as any
     return stageResult
   }
 }

@@ -21,19 +21,16 @@ export class Compose {
   private options: Options
   private stageExecutor: IStageExecutor
 
-  constructor(
-    param?: Array<Function> | Options,
-    options: Options = DEFAULT_OPTIONS,
-  ) {
+  constructor(param?: Array<Function> | Options, options?: Options) {
     if (param && param instanceof Array) {
       this.stages = param
     }
 
     if (param && isOptionsInstance(param)) {
       this.options = param as Options
-    } else {
-      this.options = options
     }
+
+    this.options = options ? options : DEFAULT_OPTIONS
 
     this.stageExecutor = makeExecutor(this.options)
   }
@@ -42,11 +39,11 @@ export class Compose {
     this.stages.push(stage)
   }
 
-  async execute(param: any) {
+  async execute(...params: any) {
     let lastStageResult: any
     for (let i = 0; i < this.stages.length; i++) {
       const stage: Function = this.stages[i]
-      lastStageResult = await this.stageExecutor.execute(stage, param)
+      lastStageResult = await this.stageExecutor.execute(stage, params)
     }
     return lastStageResult
   }

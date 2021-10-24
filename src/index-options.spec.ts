@@ -1,7 +1,7 @@
 import { Compose, Mode } from '.'
 
 describe('Compose', () => {
-  it.only('should continue the pipeline on stage fail when stopOnError is false', async () => {
+  it('should continue the pipeline on stage fail when stopOnError is false', async () => {
     const callOrder: Array<string> = []
     const syncStageAlpha = {
       handle: jest.fn().mockImplementation(() => {
@@ -33,10 +33,10 @@ describe('Compose', () => {
     expect(result).toEqual('beta-result')
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith(param)
+    expect(syncStageAlpha.handle).toBeCalledWith([param])
 
     expect(syncStageBeta.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledWith(param)
+    expect(syncStageBeta.handle).toBeCalledWith([param])
 
     // expect(callOrder).toEqual(['syncStageAlpha', 'syncStageBeta'])
   })
