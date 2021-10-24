@@ -1,6 +1,6 @@
-import { ComposableFlow } from '.'
+import { ComposableFlow } from '../src'
 
-describe('ComposableFlow', () => {
+describe('ComposableFlow with promises as stages', () => {
   it('should call stages when stages are promises', async () => {
     const callOrder: Array<string> = []
     const syncStageAlpha = {

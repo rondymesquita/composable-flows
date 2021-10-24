@@ -1,4 +1,4 @@
-import { ComposableFlow } from '.'
+import { ComposableFlow } from '../src'
 
 class EmailValidator {
   validate(email: string): boolean {

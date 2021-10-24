@@ -10,8 +10,10 @@
     "dist/**/*"
   ],
   "scripts": {
-    "test:watch": "jest --watchAll --bail",
     "test": "jest",
+    "test:watch": "jest --watchAll --bail",
+    "test:e2e": "jest --config ./tests/.jest.config.js",
+    "test:e2e:watch": "jest  --config ./tests/.jest.config.js --watchAll --bail",
     "dev": "nodemon -w ./src ./src/index.ts",
     "build": "tsc"
   },

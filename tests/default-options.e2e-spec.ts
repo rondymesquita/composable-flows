@@ -1,6 +1,6 @@
-import { ComposableFlow } from './'
+import { ComposableFlow } from '../src'
 
-describe('ComposableFlow', () => {
+describe('ComposableFlow with default options', () => {
   it('should instantiate', async () => {
     expect(() => new ComposableFlow()).not.toThrow()
   })

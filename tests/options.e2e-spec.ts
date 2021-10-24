@@ -1,4 +1,4 @@
-import { ComposableFlow, Mode } from '.'
+import { ComposableFlow, Mode } from '../src'
 
 describe('ComposableFlow Options', () => {
   it('should continue the pipeline on stage fail when stopOnError is false', async () => {

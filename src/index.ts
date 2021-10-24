@@ -21,6 +21,7 @@ const DEFAULT_OPTIONS: Options = {
 const isOptionsInstance = (value: any) => {
   return 'stopOnError' in value
 }
+
 export class ComposableFlow {
   private stages: Array<Function> = []
   private options: Options
