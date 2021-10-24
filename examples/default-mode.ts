@@ -1,13 +1,13 @@
 import { ComposableFlow } from '../src'
 
-class EmailValidator {
+export class EmailValidator {
   validate(email: string): boolean {
     console.log('>> 1.1 validating email', email)
-    return email === 'email@email.com'
+    return email.includes('@email.com')
   }
 }
 
-class EmailSender {
+export class EmailSender {
   async send(email: string, body: string): Promise<boolean> {
     console.log('>> 2.1. sending email', email, body)
 
@@ -20,29 +20,14 @@ class EmailSender {
   }
 }
 
-class Notifier {
-  async notify(): Promise<string> {
-    console.log('>> 3.1. sending notification')
-
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        console.log('>> 3.2. notification sent')
-        resolve('notification sent')
-      }, 300)
-    })
-  }
-}
-
-const emailSender = new EmailSender()
 const emailValidator = new EmailValidator()
-const notifier = new Notifier()
+const emailSender = new EmailSender()
 
 const flow = new ComposableFlow([
   () => emailValidator.validate('email@email.com'),
   () => emailSender.send('email@email.com', '# hello'),
-  () => notifier.notify(),
 ])
 
 flow.execute().then((response) => {
-  console.log('>> done', response)
+  console.log('done', response)
 })
