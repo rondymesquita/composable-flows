@@ -46,10 +46,6 @@ export class ComposableFlow {
     )
   }
 
-  push(stage: Function) {
-    this.stages.push(stage)
-  }
-
   async execute(...params: any) {
     const result = await this.composeExecutor.execute(params)
     return result

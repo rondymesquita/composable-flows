@@ -7,7 +7,6 @@ import { Options } from '..'
 export const makeComposeExecutor = (
   options: Options,
   stageExecutor: IStageExecutor,
-  stages: Array<Function>,
 ): IComposeExecutor => {
-  return new ComposeExecutorPipeline(stageExecutor, stages)
+  return new ComposeExecutorPipeline(stageExecutor)
 }

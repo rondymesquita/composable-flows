@@ -5,8 +5,6 @@ export const makeStageExecutor = (options: Options) => {
   if (options.stopOnError) {
     return new StageExecutor()
   } else {
-    console.log('>>>>> here')
-
     return new StageExecutorErrorHandling()
   }
 }
