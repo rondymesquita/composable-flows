@@ -1,25 +1,31 @@
-import { makeExecutor } from './executor/executor.factory'
-import { IStageExecutor } from './executor/istage-executor'
+import { IComposeExecutor } from './compose/contracts/icompose-executor'
+import { makeStageExecutor } from './stage/stage-executor.factory'
+import { makeComposeExecutor } from './compose/compose.factory'
+import { IStageExecutor } from './stage/contracts/istage-executor'
+
 export enum Mode {
-  STOP_ON_ERROR = 'STOP_ON_ERROR',
-  CONTINE_ON_ERROR = 'CONTINE_ON_ERROR',
+  PIPELINE = 'PIPELINE',
+  DEFAULT = 'DEFAULT',
 }
 
 export class Options {
-  stopOnError: boolean
+  stopOnError?: boolean
+  mode?: Mode
 }
 
 const DEFAULT_OPTIONS: Options = {
   stopOnError: true,
+  mode: Mode.DEFAULT,
 }
 
 const isOptionsInstance = (value: any) => {
   return 'stopOnError' in value
 }
-export class Compose {
+export class ComposableFlow {
   private stages: Array<Function> = []
   private options: Options
   private stageExecutor: IStageExecutor
+  private composeExecutor: IComposeExecutor
 
   constructor(param?: Array<Function> | Options, options?: Options) {
     if (param && param instanceof Array) {
@@ -30,9 +36,14 @@ export class Compose {
       this.options = param as Options
     }
 
-    this.options = options ? options : DEFAULT_OPTIONS
+    this.options = Object.assign(DEFAULT_OPTIONS, options)
 
-    this.stageExecutor = makeExecutor(this.options)
+    this.stageExecutor = makeStageExecutor(this.options)
+    this.composeExecutor = makeComposeExecutor(
+      this.options,
+      this.stageExecutor,
+      this.stages,
+    )
   }
 
   push(stage: Function) {
@@ -40,11 +51,7 @@ export class Compose {
   }
 
   async execute(...params: any) {
-    let lastStageResult: any
-    for (let i = 0; i < this.stages.length; i++) {
-      const stage: Function = this.stages[i]
-      lastStageResult = await this.stageExecutor.execute(stage, params)
-    }
-    return lastStageResult
+    const result = await this.composeExecutor.execute(params)
+    return result
   }
 }

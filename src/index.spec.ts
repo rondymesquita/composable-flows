@@ -1,8 +1,8 @@
-import { Compose } from './'
+import { ComposableFlow } from './'
 
-describe('Compose', () => {
+describe('ComposableFlow', () => {
   it('should instantiate', async () => {
-    expect(() => new Compose()).not.toThrow()
+    expect(() => new ComposableFlow()).not.toThrow()
   })
 
   it('should execute when passing a single stage', async () => {
@@ -12,7 +12,7 @@ describe('Compose', () => {
 
     const param = 'email@email.com'
 
-    const sut = new Compose([syncStageAlpha.handle])
+    const sut = new ComposableFlow([syncStageAlpha.handle])
     const result = await sut.execute(param)
     expect(result).toEqual('alpha-result')
   })
@@ -33,7 +33,7 @@ describe('Compose', () => {
 
     const param = 'email@email.com'
 
-    const sut = new Compose()
+    const sut = new ComposableFlow()
     sut.push(syncStageAlpha.handle)
     sut.push(syncStageBeta.handle)
 
@@ -66,7 +66,10 @@ describe('Compose', () => {
 
     const param = 'email@email.com'
 
-    const sut = new Compose([syncStageAlpha.handle, syncStageBeta.handle])
+    const sut = new ComposableFlow([
+      syncStageAlpha.handle,
+      syncStageBeta.handle,
+    ])
 
     expect(syncStageAlpha.handle).toBeCalledTimes(0)
     expect(syncStageBeta.handle).toBeCalledTimes(0)
@@ -92,7 +95,10 @@ describe('Compose', () => {
 
     const param = 'email@email.com'
 
-    const sut = new Compose([syncStageAlpha.handle, syncStageBeta.handle])
+    const sut = new ComposableFlow([
+      syncStageAlpha.handle,
+      syncStageBeta.handle,
+    ])
     const result = await sut.execute(param)
     expect(result).toEqual('beta-result')
   })
@@ -110,7 +116,10 @@ describe('Compose', () => {
 
     const param = 'email@email.com'
 
-    const sut = new Compose([syncStageAlpha.handle, syncStageBeta.handle])
+    const sut = new ComposableFlow([
+      syncStageAlpha.handle,
+      syncStageBeta.handle,
+    ])
 
     await expect(sut.execute(param)).rejects.toEqual(new Error('stage error'))
 
@@ -129,7 +138,10 @@ describe('Compose', () => {
       handle: jest.fn().mockReturnValue('beta-result'),
     }
 
-    const sut = new Compose([syncStageAlpha.handle, syncStageBeta.handle])
+    const sut = new ComposableFlow([
+      syncStageAlpha.handle,
+      syncStageBeta.handle,
+    ])
 
     const paramA = 'first param'
     const paramB = 'first param'
