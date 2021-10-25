@@ -28,6 +28,6 @@ const flow = new ComposableFlow([
   () => emailSender.send('email@email.com', '# hello'),
 ])
 
-flow.execute().then((response) => {
-  console.log('done', response)
+flow.execute().then((lastResult) => {
+  console.log('done', lastResult)
 })

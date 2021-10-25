@@ -58,6 +58,6 @@ const flow = new ComposableFlow(
   options,
 )
 
-flow.execute().then((response) => {
-  console.log('done', response)
+flow.execute().then((lastResult) => {
+  console.log('done', lastResult)
 })
