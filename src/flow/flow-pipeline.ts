@@ -1,7 +1,7 @@
 import { IStageExecutor } from '../stage/contracts/istage-executor'
-import { IComposeExecutor } from './contracts/icompose-executor'
+import { IFlow } from './contracts/iflow'
 
-export class ComposeExecutorDefault implements IComposeExecutor {
+export class FlowPipeline implements IFlow {
   constructor(
     private readonly stageExecutor: IStageExecutor,
     private readonly stages: Array<Function>,
@@ -10,7 +10,7 @@ export class ComposeExecutorDefault implements IComposeExecutor {
     let lastStageResult: any
     for (let i = 0; i < this.stages.length; i++) {
       const stage: Function = this.stages[i]
-      lastStageResult = await this.stageExecutor.execute(stage)
+      lastStageResult = await this.stageExecutor.execute(stage, lastStageResult)
     }
     return lastStageResult
   }

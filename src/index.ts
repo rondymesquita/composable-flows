@@ -1,4 +1,4 @@
-import { IComposeExecutor, makeComposeExecutor } from './compose'
+import { IFlow, makeFlow } from './flow'
 import { makeStageExecutor, IStageExecutor } from './stage'
 
 export enum Mode {
@@ -24,7 +24,7 @@ export class ComposableFlow {
   private stages: Array<Function> = []
   private options: Options
   private stageExecutor: IStageExecutor
-  private composeExecutor: IComposeExecutor
+  private flow: IFlow
 
   constructor(param?: Array<Function> | Options, options?: Options) {
     if (param && param instanceof Array) {
@@ -38,15 +38,11 @@ export class ComposableFlow {
     this.options = Object.assign(DEFAULT_OPTIONS, options)
 
     this.stageExecutor = makeStageExecutor(this.options)
-    this.composeExecutor = makeComposeExecutor(
-      this.options,
-      this.stageExecutor,
-      this.stages,
-    )
+    this.flow = makeFlow(this.options, this.stageExecutor, this.stages)
   }
 
   async execute() {
-    const result = await this.composeExecutor.execute()
+    const result = await this.flow.execute()
     return result
   }
 }
