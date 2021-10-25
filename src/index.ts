@@ -45,8 +45,8 @@ export class ComposableFlow {
     )
   }
 
-  async execute(...params: any) {
-    const result = await this.composeExecutor.execute(params)
+  async execute() {
+    const result = await this.composeExecutor.execute()
     return result
   }
 }

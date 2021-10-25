@@ -10,10 +10,8 @@ describe('ComposableFlow with default options', () => {
       handle: jest.fn().mockReturnValue('alpha-result'),
     }
 
-    const param = 'email@email.com'
-
     const sut = new ComposableFlow([syncStageAlpha.handle])
-    const result = await sut.execute(param)
+    const result = await sut.execute()
     expect(result).toEqual('alpha-result')
   })
 
@@ -31,8 +29,6 @@ describe('ComposableFlow with default options', () => {
         .mockImplementation(() => callOrder.push('syncStageBeta')),
     }
 
-    const param = 'email@email.com'
-
     const sut = new ComposableFlow([
       syncStageAlpha.handle,
       syncStageBeta.handle,
@@ -40,13 +36,13 @@ describe('ComposableFlow with default options', () => {
 
     expect(syncStageAlpha.handle).toBeCalledTimes(0)
     expect(syncStageBeta.handle).toBeCalledTimes(0)
-    await sut.execute(param)
+    await sut.execute()
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith([param])
+    expect(syncStageAlpha.handle).toBeCalledWith(undefined)
 
     expect(syncStageBeta.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledWith([param])
+    expect(syncStageBeta.handle).toBeCalledWith(undefined)
 
     expect(callOrder).toEqual(['syncStageAlpha', 'syncStageBeta'])
   })
@@ -66,7 +62,7 @@ describe('ComposableFlow with default options', () => {
       syncStageAlpha.handle,
       syncStageBeta.handle,
     ])
-    const result = await sut.execute(param)
+    const result = await sut.execute()
     expect(result).toEqual('beta-result')
   })
 
@@ -81,17 +77,15 @@ describe('ComposableFlow with default options', () => {
       handle: jest.fn().mockReturnValue('beta-result'),
     }
 
-    const param = 'email@email.com'
-
     const sut = new ComposableFlow([
       syncStageAlpha.handle,
       syncStageBeta.handle,
     ])
 
-    await expect(sut.execute(param)).rejects.toEqual(new Error('stage error'))
+    await expect(sut.execute()).rejects.toEqual(new Error('stage error'))
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith([param])
+    expect(syncStageAlpha.handle).toBeCalledWith(undefined)
 
     expect(syncStageBeta.handle).not.toBeCalled()
   })
@@ -110,15 +104,13 @@ describe('ComposableFlow with default options', () => {
       syncStageBeta.handle,
     ])
 
-    const paramA = 'first param'
-    const paramB = 'first param'
-    const result = await sut.execute(paramA, paramB)
+    const result = await sut.execute()
     expect(result).toEqual('beta-result')
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith([paramA, paramB])
+    expect(syncStageAlpha.handle).toBeCalledWith(undefined)
 
     expect(syncStageBeta.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledWith([paramA, paramB])
+    expect(syncStageBeta.handle).toBeCalledWith(undefined)
   })
 })

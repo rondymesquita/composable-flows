@@ -17,8 +17,6 @@ describe('ComposableFlow with promises as stages', () => {
       }),
     }
 
-    const param = 'email@email.com'
-
     const sut = new ComposableFlow([
       syncStageAlpha.handle,
       syncStageBeta.handle,
@@ -26,13 +24,13 @@ describe('ComposableFlow with promises as stages', () => {
 
     expect(syncStageAlpha.handle).toBeCalledTimes(0)
     expect(syncStageBeta.handle).toBeCalledTimes(0)
-    await sut.execute(param)
+    await sut.execute()
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith([param])
+    expect(syncStageAlpha.handle).toBeCalledWith(undefined)
 
     expect(syncStageBeta.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledWith([param])
+    expect(syncStageBeta.handle).toBeCalledWith(undefined)
 
     expect(callOrder).toEqual(['syncStageAlpha', 'syncStageBeta'])
   })
@@ -52,8 +50,6 @@ describe('ComposableFlow with promises as stages', () => {
       }),
     }
 
-    const param = 'email@email.com'
-
     const sut = new ComposableFlow([
       syncStageAlpha.handle,
       syncStageBeta.handle,
@@ -61,13 +57,13 @@ describe('ComposableFlow with promises as stages', () => {
 
     expect(syncStageAlpha.handle).toBeCalledTimes(0)
     expect(syncStageBeta.handle).toBeCalledTimes(0)
-    await sut.execute(param)
+    await sut.execute()
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith([param])
+    expect(syncStageAlpha.handle).toBeCalledWith(undefined)
 
     expect(syncStageBeta.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledWith([param])
+    expect(syncStageBeta.handle).toBeCalledWith(undefined)
 
     expect(callOrder).toEqual(['syncStageAlpha', 'syncStageBeta'])
   })

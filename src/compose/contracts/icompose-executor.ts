@@ -1,3 +1,3 @@
 export interface IComposeExecutor {
-  execute(params: any): Promise<any>
+  execute(): Promise<any>
 }

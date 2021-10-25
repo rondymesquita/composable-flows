@@ -6,8 +6,8 @@ export class ComposeExecutorPipeline implements IComposeExecutor {
     private readonly stageExecutor: IStageExecutor,
     private readonly stages: Array<Function>,
   ) {}
-  async execute(params: any): Promise<any> {
-    let lastStageResult: any = params
+  async execute(): Promise<any> {
+    let lastStageResult: any
     for (let i = 0; i < this.stages.length; i++) {
       const stage: Function = this.stages[i]
       lastStageResult = await this.stageExecutor.execute(stage, lastStageResult)

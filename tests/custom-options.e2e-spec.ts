@@ -28,15 +28,14 @@ describe('ComposableFlow Options', () => {
     expect(syncStageAlpha.handle).toBeCalledTimes(0)
     expect(syncStageBeta.handle).toBeCalledTimes(0)
 
-    const param = 'email@email.com'
-    const result = await sut.execute(param)
+    const result = await sut.execute()
     expect(result).toEqual('beta-result')
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith([param])
+    expect(syncStageAlpha.handle).toBeCalledWith(undefined)
 
     expect(syncStageBeta.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledWith([param])
+    expect(syncStageBeta.handle).toBeCalledWith(undefined)
 
     expect(callOrder).toEqual(['syncStageAlpha', 'syncStageBeta'])
   })
@@ -72,12 +71,11 @@ describe('ComposableFlow Options', () => {
     expect(syncStageBeta.handle).toBeCalledTimes(0)
     expect(syncStageGamma.handle).toBeCalledTimes(0)
 
-    const param = 'email@email.com'
-    const result = await sut.execute(param)
+    const result = await sut.execute()
     expect(result).toEqual('gamma-result')
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith([param])
+    expect(syncStageAlpha.handle).toBeCalledWith(undefined)
 
     expect(syncStageBeta.handle).toBeCalledTimes(1)
     expect(syncStageBeta.handle).toBeCalledWith('alpha-result')
