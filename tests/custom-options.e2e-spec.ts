@@ -1,6 +1,6 @@
 import { ComposableFlow, Mode } from '../src'
 
-describe('ComposableFlow Options', () => {
+describe('ComposableFlow with custom options', () => {
   it('should continue the pipeline on stage fail when stopOnError is false', async () => {
     const callOrder: Array<string> = []
     const syncStageAlpha = {
@@ -29,7 +29,10 @@ describe('ComposableFlow Options', () => {
     expect(syncStageBeta.handle).toBeCalledTimes(0)
 
     const result = await sut.execute()
-    expect(result).toEqual('beta-result')
+    expect(result).toEqual({
+      allResults: [undefined, 'beta-result'],
+      lastResult: 'beta-result',
+    })
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
     expect(syncStageAlpha.handle).toBeCalledWith(undefined)
@@ -72,7 +75,10 @@ describe('ComposableFlow Options', () => {
     expect(syncStageGamma.handle).toBeCalledTimes(0)
 
     const result = await sut.execute()
-    expect(result).toEqual('gamma-result')
+    expect(result).toEqual({
+      allResults: ['alpha-result', 'beta-result', 'gamma-result'],
+      lastResult: 'gamma-result',
+    })
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
     expect(syncStageAlpha.handle).toBeCalledWith(undefined)

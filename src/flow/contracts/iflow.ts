@@ -1,3 +1,4 @@
+import { FlowResult } from './../entities/flow-result'
 export interface IFlow {
-  execute(): Promise<any>
+  execute(): Promise<FlowResult>
 }
