@@ -1,6 +1,6 @@
 import { ComposableFlow } from '../src'
 
-describe('ComposableFlow with default options', () => {
+describe('ComposableFlow with default mode', () => {
   it('should instantiate', async () => {
     expect(() => new ComposableFlow()).not.toThrow()
   })
@@ -50,7 +50,7 @@ describe('ComposableFlow with default options', () => {
     expect(callOrder).toEqual(['syncStageAlpha', 'syncStageBeta'])
   })
 
-  it('should get the result of flow', async () => {
+  it('should get the results of flow', async () => {
     const syncStageAlpha = {
       handle: jest.fn().mockReturnValue('alpha-result'),
     }
@@ -94,6 +94,48 @@ describe('ComposableFlow with default options', () => {
     expect(syncStageAlpha.handle).toBeCalledWith(undefined)
 
     expect(syncStageBeta.handle).not.toBeCalled()
+  })
+
+  it('should continue the pipeline on stage fail when stopOnError is false', async () => {
+    const callOrder: Array<string> = []
+    const syncStageAlpha = {
+      handle: jest.fn().mockImplementation(() => {
+        callOrder.push('syncStageAlpha')
+        return Promise.reject(new Error('alpha stage error'))
+      }),
+    }
+
+    const syncStageBeta = {
+      handle: jest.fn().mockImplementation(() => {
+        callOrder.push('syncStageBeta')
+        return Promise.resolve('beta-result')
+      }),
+    }
+
+    const options = {
+      stopOnError: false,
+    }
+    const sut = new ComposableFlow(
+      [syncStageAlpha.handle, syncStageBeta.handle],
+      options,
+    )
+
+    expect(syncStageAlpha.handle).toBeCalledTimes(0)
+    expect(syncStageBeta.handle).toBeCalledTimes(0)
+
+    const result = await sut.execute()
+    expect(result).toEqual({
+      allResults: [undefined, 'beta-result'],
+      lastResult: 'beta-result',
+    })
+
+    expect(syncStageAlpha.handle).toBeCalledTimes(1)
+    expect(syncStageAlpha.handle).toBeCalledWith(undefined)
+
+    expect(syncStageBeta.handle).toBeCalledTimes(1)
+    expect(syncStageBeta.handle).toBeCalledWith(undefined)
+
+    expect(callOrder).toEqual(['syncStageAlpha', 'syncStageBeta'])
   })
 
   // it('should pass multiples parameters for the stage', async () => {
