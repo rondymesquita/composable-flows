@@ -2,7 +2,7 @@ import { ComposableFlow, Mode } from '../src'
 
 export class GetUserInfo {
   get(email: string, role: string): any {
-    console.log('>> 1.1 getting user', email, role)
+    console.log('>> 1.1 getting user email:[%s] role:[%s]', email, role)
     return {
       id: 1,
       email,
@@ -12,11 +12,11 @@ export class GetUserInfo {
 
 export class EmailSender {
   async send(userInfo: any): Promise<any> {
-    console.log('>> 2.1. sending email to', userInfo)
+    console.log('>> 2.1. sending email to userInfo:%o', userInfo)
 
     return new Promise((resolve) => {
       setTimeout(() => {
-        console.log('>> 2.2. email sent', userInfo)
+        console.log('>> 2.2. email sent:[%s]', userInfo.email)
         resolve({
           event: 'email',
           userID: userInfo.id,
@@ -28,11 +28,11 @@ export class EmailSender {
 
 export class Database {
   async storeLog(log: any): Promise<boolean> {
-    console.log('>> 3.1. storing log for event [%s]', log.event)
+    console.log('>> 3.1. storing log for event:[%s]', log.event)
 
     return new Promise((resolve) => {
       setTimeout(() => {
-        console.log('>> 3.2. log saved', log)
+        console.log('>> 3.2. log saved:[%s]', log.userID)
         resolve(true)
       }, 300)
     })
