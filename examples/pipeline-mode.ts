@@ -52,7 +52,6 @@ const flow = new ComposableFlow(
     () => {
       return getUserInfo.get('email@email.com', 'admin')
     },
-    // getUserInfo.get,
     emailSender.send,
     database.storeLog,
   ],
@@ -60,5 +59,5 @@ const flow = new ComposableFlow(
 )
 
 flow.execute().then((lastResult) => {
-  // console.log('done', lastResult)
+  console.log('done', lastResult)
 })
