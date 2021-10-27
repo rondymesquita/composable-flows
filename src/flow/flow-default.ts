@@ -7,12 +7,19 @@ export class FlowDefault implements IFlow {
     private readonly stageExecutor: IStageExecutor,
     private readonly stages: Array<Function>,
   ) {}
-  async execute(): Promise<FlowResult> {
+  async execute(param: any): Promise<FlowResult> {
     let lastStageResult: any
     const allResults: Array<any> = []
-    for (let i = 0; i < this.stages.length; i++) {
-      const stage: Function = this.stages[i]
-      lastStageResult = await this.stageExecutor.execute(stage)
+    const always = true
+    const shouldSpreadParams = always
+
+    for (let index = 0; index < this.stages.length; index++) {
+      const stage: Function = this.stages[index]
+      lastStageResult = await this.stageExecutor.execute(
+        stage,
+        shouldSpreadParams,
+        param,
+      )
       allResults.push(lastStageResult)
     }
     return {

@@ -27,10 +27,10 @@ describe('ComposableFlow with promises as stages', () => {
     await sut.execute()
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith(undefined)
+    expect(syncStageAlpha.handle).toBeCalledWith()
 
     expect(syncStageBeta.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledWith(undefined)
+    expect(syncStageBeta.handle).toBeCalledWith()
 
     expect(callOrder).toEqual(['syncStageAlpha', 'syncStageBeta'])
   })
@@ -60,10 +60,10 @@ describe('ComposableFlow with promises as stages', () => {
     await sut.execute()
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith(undefined)
+    expect(syncStageAlpha.handle).toBeCalledWith()
 
     expect(syncStageBeta.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledWith(undefined)
+    expect(syncStageBeta.handle).toBeCalledWith()
 
     expect(callOrder).toEqual(['syncStageAlpha', 'syncStageBeta'])
   })

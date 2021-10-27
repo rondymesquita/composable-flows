@@ -7,12 +7,21 @@ export class FlowPipeline implements IFlow {
     private readonly stageExecutor: IStageExecutor,
     private readonly stages: Array<Function>,
   ) {}
-  async execute(): Promise<FlowResult> {
-    let lastStageResult: any
+  async execute(param: any): Promise<FlowResult> {
+    let lastStageResult: any = param
     const allResults: Array<any> = []
-    for (let i = 0; i < this.stages.length; i++) {
-      const stage: Function = this.stages[i]
-      lastStageResult = await this.stageExecutor.execute(stage, lastStageResult)
+
+    for (let index = 0; index < this.stages.length; index++) {
+      const stage: Function = this.stages[index]
+      const onlyFirst = index === 0
+      const shouldSpreadParams = onlyFirst
+
+      lastStageResult = await this.stageExecutor.execute(
+        stage,
+        shouldSpreadParams,
+        lastStageResult,
+      )
+
       allResults.push(lastStageResult)
     }
     return {

@@ -42,10 +42,10 @@ describe('ComposableFlow with default mode', () => {
     await sut.execute()
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith(undefined)
+    expect(syncStageAlpha.handle).toBeCalledWith()
 
     expect(syncStageBeta.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledWith(undefined)
+    expect(syncStageBeta.handle).toBeCalledWith()
 
     expect(callOrder).toEqual(['syncStageAlpha', 'syncStageBeta'])
   })
@@ -91,7 +91,7 @@ describe('ComposableFlow with default mode', () => {
     await expect(sut.execute()).rejects.toEqual(new Error('stage error'))
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith(undefined)
+    expect(syncStageAlpha.handle).toBeCalledWith()
 
     expect(syncStageBeta.handle).not.toBeCalled()
   })
@@ -130,35 +130,38 @@ describe('ComposableFlow with default mode', () => {
     })
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith(undefined)
+    expect(syncStageAlpha.handle).toBeCalledWith()
 
     expect(syncStageBeta.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledWith(undefined)
+    expect(syncStageBeta.handle).toBeCalledWith()
 
     expect(callOrder).toEqual(['syncStageAlpha', 'syncStageBeta'])
   })
 
-  // it('should pass multiples parameters for the stage', async () => {
-  //   const syncStageAlpha = {
-  //     handle: jest.fn().mockReturnValue('alpha-result'),
-  //   }
+  it('should pass multiples parameters for the stage', async () => {
+    const syncStageAlpha = {
+      handle: jest.fn().mockReturnValue('alpha-result'),
+    }
 
-  //   const syncStageBeta = {
-  //     handle: jest.fn().mockReturnValue('beta-result'),
-  //   }
+    const syncStageBeta = {
+      handle: jest.fn().mockReturnValue('beta-result'),
+    }
 
-  //   const sut = new ComposableFlow([
-  //     syncStageAlpha.handle,
-  //     syncStageBeta.handle,
-  //   ])
+    const sut = new ComposableFlow([
+      syncStageAlpha.handle,
+      syncStageBeta.handle,
+    ])
 
-  //   const result = await sut.execute()
-  //   expect(result).toEqual('beta-result')
+    const result = await sut.execute('email@email.com', 'admin')
+    expect(result).toEqual({
+      allResults: ['alpha-result', 'beta-result'],
+      lastResult: 'beta-result',
+    })
 
-  //   expect(syncStageAlpha.handle).toBeCalledTimes(1)
-  //   expect(syncStageAlpha.handle).toBeCalledWith(undefined)
+    expect(syncStageAlpha.handle).toBeCalledTimes(1)
+    expect(syncStageAlpha.handle).toBeCalledWith('email@email.com', 'admin')
 
-  //   expect(syncStageBeta.handle).toBeCalledTimes(1)
-  //   expect(syncStageBeta.handle).toBeCalledWith(undefined)
-  // })
+    expect(syncStageBeta.handle).toBeCalledTimes(1)
+    expect(syncStageBeta.handle).toBeCalledWith('email@email.com', 'admin')
+  })
 })

@@ -32,7 +32,7 @@ export class Database {
 
     return new Promise((resolve) => {
       setTimeout(() => {
-        console.log('>> 3.2. log saved id:[%s]', log.userID)
+        console.log('>> 3.2. log saved:[%s]', log.userID)
         resolve(true)
       }, 300)
     })
@@ -48,10 +48,16 @@ const options = {
 }
 
 const flow = new ComposableFlow(
-  [getUserInfo.get, emailSender.send, database.storeLog],
+  [
+    () => {
+      return getUserInfo.get('email@email.com', 'admin')
+    },
+    emailSender.send,
+    database.storeLog,
+  ],
   options,
 )
 
-flow.execute('email@email.com', 'admin').then((lastResult) => {
+flow.execute().then((lastResult) => {
   console.log('done', lastResult)
 })

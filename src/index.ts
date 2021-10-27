@@ -41,8 +41,8 @@ export class ComposableFlow {
     this.flow = makeFlow(this.options, this.stageExecutor, this.stages)
   }
 
-  async execute() {
-    const result = await this.flow.execute()
+  async execute(...params: any[]) {
+    const result = await this.flow.execute(params)
     return result
   }
 }
