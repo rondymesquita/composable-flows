@@ -224,7 +224,40 @@ describe('ComposableFlow with default mode', () => {
     })
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
+    expect(syncStageAlpha.handle).toBeCalledWith()
+
+    expect(syncStageBeta.handle).toBeCalledTimes(1)
     expect(syncStageBeta.handle).toBeCalledWith()
+  })
+
+  it('should allow "handle" to be a function with parameters', async () => {
+    const syncStageAlpha = {
+      handle: jest.fn((param) => 'fake').mockReturnValue('alpha-result'),
+    }
+
+    const syncStageBeta = {
+      handle: jest.fn((param) => 'fake').mockReturnValue('beta-result'),
+    }
+
+    const sut = new ComposableFlow([
+      {
+        handler: syncStageAlpha.handle,
+        when: () => true,
+      },
+      syncStageBeta.handle,
+    ])
+
+    expect(syncStageAlpha.handle).toBeCalledTimes(0)
+    expect(syncStageBeta.handle).toBeCalledTimes(0)
+
+    const result = await sut.execute()
+    expect(result).toEqual({
+      allResults: ['alpha-result', 'beta-result'],
+      lastResult: 'beta-result',
+    })
+
+    expect(syncStageAlpha.handle).toBeCalledTimes(1)
+    expect(syncStageAlpha.handle).toBeCalledWith()
 
     expect(syncStageBeta.handle).toBeCalledTimes(1)
     expect(syncStageBeta.handle).toBeCalledWith()

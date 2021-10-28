@@ -6,7 +6,7 @@ const emailSender = new EmailSender()
 
 const flow = new ComposableFlow([
   {
-    handler: () => emailValidator.validate('email@email.com'),
+    handler: emailValidator.validate,
     when: () => {
       return false
     },
