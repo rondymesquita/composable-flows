@@ -1,5 +1,5 @@
 export interface StageContainer {
-  handler: () => any
+  handler: (...params: any[]) => any
   when?: () => boolean
 }
 
