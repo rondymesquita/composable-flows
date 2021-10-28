@@ -1,3 +1,4 @@
+import { Stage } from './../stage/entities/stage'
 import { IStageExecutor } from '../stage/contracts/istage-executor'
 import { IFlow } from './contracts/iflow'
 import { Mode } from '../index'
@@ -8,7 +9,7 @@ import { Options } from '..'
 export const makeFlow = (
   options: Options,
   stageExecutor: IStageExecutor,
-  stages: Array<Function>,
+  stages: Array<Stage>,
 ): IFlow => {
   if (options.mode === Mode.PIPELINE) {
     return new FlowPipeline(stageExecutor, stages)

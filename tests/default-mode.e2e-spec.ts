@@ -164,4 +164,69 @@ describe('ComposableFlow with default mode', () => {
     expect(syncStageBeta.handle).toBeCalledTimes(1)
     expect(syncStageBeta.handle).toBeCalledWith('email@email.com', 'admin')
   })
+
+  it('should not execute a stage if "when" returns false ', async () => {
+    const syncStageAlpha = {
+      handle: jest.fn().mockReturnValue('alpha-result'),
+    }
+
+    const syncStageBeta = {
+      handle: jest.fn().mockReturnValue('beta-result'),
+    }
+
+    const sut = new ComposableFlow([
+      {
+        when: () => false,
+        handler: syncStageAlpha.handle,
+      },
+      syncStageBeta.handle,
+    ])
+
+    expect(syncStageAlpha.handle).toBeCalledTimes(0)
+    expect(syncStageBeta.handle).toBeCalledTimes(0)
+
+    const result = await sut.execute()
+    expect(result).toEqual({
+      allResults: [undefined, 'beta-result'],
+      lastResult: 'beta-result',
+    })
+
+    expect(syncStageAlpha.handle).toBeCalledTimes(0)
+
+    expect(syncStageBeta.handle).toBeCalledTimes(1)
+    expect(syncStageBeta.handle).toBeCalledWith()
+  })
+
+  it('should execute a stage if "when" returns true ', async () => {
+    const syncStageAlpha = {
+      handle: jest.fn().mockReturnValue('alpha-result'),
+    }
+
+    const syncStageBeta = {
+      handle: jest.fn().mockReturnValue('beta-result'),
+    }
+
+    const sut = new ComposableFlow([
+      {
+        when: () => true,
+        handler: syncStageAlpha.handle,
+      },
+      syncStageBeta.handle,
+    ])
+
+    expect(syncStageAlpha.handle).toBeCalledTimes(0)
+    expect(syncStageBeta.handle).toBeCalledTimes(0)
+
+    const result = await sut.execute()
+    expect(result).toEqual({
+      allResults: ['alpha-result', 'beta-result'],
+      lastResult: 'beta-result',
+    })
+
+    expect(syncStageAlpha.handle).toBeCalledTimes(1)
+    expect(syncStageBeta.handle).toBeCalledWith()
+
+    expect(syncStageBeta.handle).toBeCalledTimes(1)
+    expect(syncStageBeta.handle).toBeCalledWith()
+  })
 })

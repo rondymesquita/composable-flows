@@ -1,3 +1,4 @@
+import { Stage } from './../stage/entities/stage'
 import { FlowResult } from './entities/flow-result'
 import { IStageExecutor } from '../stage/contracts/istage-executor'
 import { IFlow } from './contracts/iflow'
@@ -5,7 +6,7 @@ import { IFlow } from './contracts/iflow'
 export class FlowDefault implements IFlow {
   constructor(
     private readonly stageExecutor: IStageExecutor,
-    private readonly stages: Array<Function>,
+    private readonly stages: Array<Stage>,
   ) {}
   async execute(param: any): Promise<FlowResult> {
     let lastStageResult: any
@@ -14,7 +15,7 @@ export class FlowDefault implements IFlow {
     const shouldSpreadParams = always
 
     for (let index = 0; index < this.stages.length; index++) {
-      const stage: Function = this.stages[index]
+      const stage: Stage = this.stages[index]
       lastStageResult = await this.stageExecutor.execute(
         stage,
         shouldSpreadParams,

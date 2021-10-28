@@ -1,3 +1,4 @@
+import { Stage } from './stage/entities'
 import { IFlow, makeFlow } from './flow'
 import { makeStageExecutor, IStageExecutor } from './stage'
 
@@ -21,12 +22,12 @@ const isOptionsInstance = (value: any) => {
 }
 
 export class ComposableFlow {
-  private stages: Array<Function> = []
+  private stages: Array<Stage> = []
   private options: Options
   private stageExecutor: IStageExecutor
   private flow: IFlow
 
-  constructor(param?: Array<Function> | Options, options?: Options) {
+  constructor(param?: Array<Stage> | Options, options?: Options) {
     if (param && param instanceof Array) {
       this.stages = param
     }
