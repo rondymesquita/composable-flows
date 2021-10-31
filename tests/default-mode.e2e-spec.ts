@@ -72,6 +72,31 @@ describe('ComposableFlow with default mode', () => {
     })
   })
 
+  it('should use same initial parameter for all stages', async () => {
+    const syncStageAlpha = {
+      handle: jest.fn().mockReturnValue('alpha-result'),
+    }
+
+    const syncStageBeta = {
+      handle: jest.fn().mockReturnValue('beta-result'),
+    }
+
+    const param = 'email@email.com'
+
+    const sut = new ComposableFlow([
+      syncStageAlpha.handle,
+      syncStageBeta.handle,
+    ])
+    const result = await sut.execute(param)
+    expect(result).toEqual({
+      allResults: ['alpha-result', 'beta-result'],
+      lastResult: 'beta-result',
+    })
+
+    expect(syncStageAlpha.handle).toBeCalledWith('email@email.com')
+    expect(syncStageBeta.handle).toBeCalledWith('email@email.com')
+  })
+
   it('should stop the execution of remaining stages when fails', async () => {
     const syncStageAlpha = {
       handle: jest.fn().mockImplementation(() => {
