@@ -8,7 +8,7 @@ const isProduction = process.env.NODE_ENV == 'production'
 const config = {
   entry: './src/index.ts',
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist/browser'),
     filename: 'index.js',
     // library: 'composable',
     libraryTarget: 'umd',

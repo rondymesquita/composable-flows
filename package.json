@@ -2,10 +2,7 @@
   "name": "composable-flows",
   "version": "1.0.0",
   "description": "My webpack project",
-  "main": "./dist/index.js",
-  "bin": {
-    "composable-flows": "./dist/index.js"
-  },
+  "main": "./dist/node/index.js",
   "files": [
     "dist/**/*"
   ],
