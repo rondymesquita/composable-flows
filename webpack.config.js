@@ -7,6 +7,7 @@ const isProduction = process.env.NODE_ENV == 'production'
 
 const config = {
   entry: './src/index.ts',
+  devtool: 'source-map',
   output: {
     path: path.resolve(__dirname, 'dist/browser'),
     filename: 'index.js',
@@ -29,6 +30,9 @@ const config = {
         test: /\.(ts|tsx)$/i,
         loader: 'ts-loader',
         exclude: ['/node_modules/'],
+        options: {
+          configFile: 'tsconfig.browser.json',
+        },
       },
     ],
   },
