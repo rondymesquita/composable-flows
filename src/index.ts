@@ -7,7 +7,7 @@ export enum Mode {
   DEFAULT = 'DEFAULT',
 }
 
-export class Options {
+export interface Options {
   stopOnError?: boolean
   mode?: Mode
 }

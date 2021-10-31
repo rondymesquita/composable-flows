@@ -1,13 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
-    "module": "commonjs",
-    "outDir": ".dist",
-    "strict": true,
-    "strictPropertyInitialization": false,
+    "module": "es6",
+    "target": "es5",
     "moduleResolution": "node",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
-  }
+    "allowJs": true,
+    "noImplicitAny": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
+  },
+  "include": ["./src"]
 }
