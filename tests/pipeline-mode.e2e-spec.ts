@@ -1,6 +1,6 @@
-import { ComposableFlow, Mode } from '../src'
+import { Flow, FlowMode } from '../src'
 
-describe('ComposableFlow with pipeline mode', () => {
+describe('Flow with pipeline mode', () => {
   it('should pass result of stage as param to the next when mode is pipeline', async () => {
     const syncStageAlpha = {
       handle: jest.fn().mockImplementation(() => {
@@ -21,9 +21,9 @@ describe('ComposableFlow with pipeline mode', () => {
     }
 
     const options = {
-      mode: Mode.PIPELINE,
+      mode: FlowMode.PIPELINE,
     }
-    const sut = new ComposableFlow(
+    const sut = new Flow(
       [syncStageAlpha.handle, syncStageBeta.handle, syncStageGamma.handle],
       options,
     )
@@ -68,9 +68,9 @@ describe('ComposableFlow with pipeline mode', () => {
     }
 
     const options = {
-      mode: Mode.PIPELINE,
+      mode: FlowMode.PIPELINE,
     }
-    const sut = new ComposableFlow(
+    const sut = new Flow(
       [syncStageAlpha.handle, syncStageBeta.handle, syncStageGamma.handle],
       options,
     )
@@ -110,13 +110,10 @@ describe('ComposableFlow with pipeline mode', () => {
     }
 
     const options = {
-      mode: Mode.PIPELINE,
+      mode: FlowMode.PIPELINE,
     }
 
-    const sut = new ComposableFlow(
-      [syncStageAlpha.handle, syncStageBeta.handle],
-      options,
-    )
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle], options)
 
     await expect(sut.execute()).rejects.toEqual(new Error('stage error'))
 
@@ -143,13 +140,10 @@ describe('ComposableFlow with pipeline mode', () => {
     }
 
     const options = {
-      mode: Mode.PIPELINE,
+      mode: FlowMode.PIPELINE,
       stopOnError: false,
     }
-    const sut = new ComposableFlow(
-      [syncStageAlpha.handle, syncStageBeta.handle],
-      options,
-    )
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle], options)
 
     expect(syncStageAlpha.handle).toBeCalledTimes(0)
     expect(syncStageBeta.handle).toBeCalledTimes(0)

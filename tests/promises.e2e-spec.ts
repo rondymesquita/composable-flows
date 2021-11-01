@@ -1,6 +1,6 @@
-import { ComposableFlow } from '../src'
+import { Flow } from '../src'
 
-describe('ComposableFlow with promises as stages', () => {
+describe('Flow with promises as stages', () => {
   it('should call stages when stages are promises', async () => {
     const callOrder: Array<string> = []
     const syncStageAlpha = {
@@ -17,10 +17,7 @@ describe('ComposableFlow with promises as stages', () => {
       }),
     }
 
-    const sut = new ComposableFlow([
-      syncStageAlpha.handle,
-      syncStageBeta.handle,
-    ])
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle])
 
     expect(syncStageAlpha.handle).toBeCalledTimes(0)
     expect(syncStageBeta.handle).toBeCalledTimes(0)
@@ -50,10 +47,7 @@ describe('ComposableFlow with promises as stages', () => {
       }),
     }
 
-    const sut = new ComposableFlow([
-      syncStageAlpha.handle,
-      syncStageBeta.handle,
-    ])
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle])
 
     expect(syncStageAlpha.handle).toBeCalledTimes(0)
     expect(syncStageBeta.handle).toBeCalledTimes(0)

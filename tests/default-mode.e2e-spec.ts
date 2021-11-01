@@ -1,8 +1,8 @@
-import { ComposableFlow } from '../src'
+import { Flow } from '../src'
 
-describe('ComposableFlow with default mode', () => {
+describe('Flow with default mode', () => {
   it('should instantiate', async () => {
-    expect(() => new ComposableFlow()).not.toThrow()
+    expect(() => new Flow()).not.toThrow()
   })
 
   it('should execute when passing a single stage', async () => {
@@ -10,7 +10,7 @@ describe('ComposableFlow with default mode', () => {
       handle: jest.fn().mockReturnValue('alpha-result'),
     }
 
-    const sut = new ComposableFlow([syncStageAlpha.handle])
+    const sut = new Flow([syncStageAlpha.handle])
     const result = await sut.execute()
     expect(result).toEqual({
       allResults: ['alpha-result'],
@@ -32,10 +32,7 @@ describe('ComposableFlow with default mode', () => {
         .mockImplementation(() => callOrder.push('syncStageBeta')),
     }
 
-    const sut = new ComposableFlow([
-      syncStageAlpha.handle,
-      syncStageBeta.handle,
-    ])
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle])
 
     expect(syncStageAlpha.handle).toBeCalledTimes(0)
     expect(syncStageBeta.handle).toBeCalledTimes(0)
@@ -61,10 +58,7 @@ describe('ComposableFlow with default mode', () => {
 
     const param = 'email@email.com'
 
-    const sut = new ComposableFlow([
-      syncStageAlpha.handle,
-      syncStageBeta.handle,
-    ])
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle])
     const result = await sut.execute()
     expect(result).toEqual({
       allResults: ['alpha-result', 'beta-result'],
@@ -83,10 +77,7 @@ describe('ComposableFlow with default mode', () => {
 
     const param = 'email@email.com'
 
-    const sut = new ComposableFlow([
-      syncStageAlpha.handle,
-      syncStageBeta.handle,
-    ])
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle])
     const result = await sut.execute(param)
     expect(result).toEqual({
       allResults: ['alpha-result', 'beta-result'],
@@ -108,10 +99,7 @@ describe('ComposableFlow with default mode', () => {
       handle: jest.fn().mockReturnValue('beta-result'),
     }
 
-    const sut = new ComposableFlow([
-      syncStageAlpha.handle,
-      syncStageBeta.handle,
-    ])
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle])
 
     await expect(sut.execute()).rejects.toEqual(new Error('stage error'))
 
@@ -140,10 +128,7 @@ describe('ComposableFlow with default mode', () => {
     const options = {
       stopOnError: false,
     }
-    const sut = new ComposableFlow(
-      [syncStageAlpha.handle, syncStageBeta.handle],
-      options,
-    )
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle], options)
 
     expect(syncStageAlpha.handle).toBeCalledTimes(0)
     expect(syncStageBeta.handle).toBeCalledTimes(0)
@@ -172,10 +157,7 @@ describe('ComposableFlow with default mode', () => {
       handle: jest.fn().mockReturnValue('beta-result'),
     }
 
-    const sut = new ComposableFlow([
-      syncStageAlpha.handle,
-      syncStageBeta.handle,
-    ])
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle])
 
     const result = await sut.execute('email@email.com', 'admin')
     expect(result).toEqual({
@@ -199,7 +181,7 @@ describe('ComposableFlow with default mode', () => {
       handle: jest.fn().mockReturnValue('beta-result'),
     }
 
-    const sut = new ComposableFlow([
+    const sut = new Flow([
       {
         when: () => false,
         handler: syncStageAlpha.handle,
@@ -231,7 +213,7 @@ describe('ComposableFlow with default mode', () => {
       handle: jest.fn().mockReturnValue('beta-result'),
     }
 
-    const sut = new ComposableFlow([
+    const sut = new Flow([
       {
         when: () => true,
         handler: syncStageAlpha.handle,
@@ -264,7 +246,7 @@ describe('ComposableFlow with default mode', () => {
       handle: jest.fn((param) => 'fake').mockReturnValue('beta-result'),
     }
 
-    const sut = new ComposableFlow([
+    const sut = new Flow([
       {
         handler: syncStageAlpha.handle,
         when: () => true,

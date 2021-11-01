@@ -3,4 +3,8 @@ export interface StageContainer {
   when?: () => boolean
 }
 
+export interface StageContainerShort {
+  [name: string]: (...params: any[]) => any
+}
+
 export type Stage = Function | StageContainer
