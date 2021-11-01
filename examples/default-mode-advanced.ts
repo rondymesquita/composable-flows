@@ -28,7 +28,7 @@ const emailSender = new EmailSender()
     { validateEmail: emailValidator.validate },
     { 'send email': emailSender.send },
   ])
-  const { result, get } = await flow.execute('email@email.com')
+  const { result } = await flow.execute('email@email.com')
 
   get('send email', ({ success, failure }) => {
     success((data) => {})

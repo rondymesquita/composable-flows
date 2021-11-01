@@ -1,8 +1,9 @@
 import { StageParser } from './parser/stage-parser'
 import { Stage } from './entities/stage'
 import { IStageExecutor } from './contracts/istage-executor'
-export class StageExecutorErrorHandling implements IStageExecutor {
-  private stageParser: StageParser
+export class StageExecutorThrow implements IStageExecutor {
+  protected stageParser: StageParser
+
   constructor() {
     this.stageParser = new StageParser()
   }
@@ -10,7 +11,7 @@ export class StageExecutorErrorHandling implements IStageExecutor {
   async execute(
     stage: Stage,
     shouldSpreadParams: boolean,
-    params: any,
+    params?: any,
   ): Promise<any> {
     let stageResult: any
 
@@ -19,14 +20,10 @@ export class StageExecutorErrorHandling implements IStageExecutor {
       return
     }
 
-    try {
-      if (shouldSpreadParams) {
-        stageResult = (await handler(...params)) as any
-      } else {
-        stageResult = (await handler(params)) as any
-      }
-    } catch (err) {
-      console.error(err)
+    if (shouldSpreadParams) {
+      stageResult = (await handler(...params)) as any
+    } else {
+      stageResult = (await handler(params)) as any
     }
     return stageResult
   }
