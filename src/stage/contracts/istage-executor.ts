@@ -1,4 +1,9 @@
+import { StageResult } from './../entities/stage-result'
 import { Stage } from './../entities/stage'
 export interface IStageExecutor {
-  execute(stage: Stage, shouldSpreadParams: boolean, params?: any): Promise<any>
+  execute(
+    stageFunction: Function,
+    shouldSpreadParams: boolean,
+    params?: any,
+  ): Promise<StageResult>
 }

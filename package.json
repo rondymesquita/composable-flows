@@ -12,7 +12,7 @@
     "test:e2e": "jest --config ./tests/.jest.config.js",
     "test:e2e:watch": "jest  --config ./tests/.jest.config.js --watchAll --bail",
     "build:web": "webpack --mode=production --node-env=production",
-    "build:web;dev": "webpack --mode=development",
+    "build:web:dev": "webpack --mode=development",
     "build:web:prod": "webpack --mode=production --node-env=production",
     "watch:web": "webpack --watch",
     "dev:web": "webpack serve",

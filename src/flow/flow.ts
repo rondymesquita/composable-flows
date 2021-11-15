@@ -6,7 +6,7 @@ import { IFlow } from './contracts'
 import { makeStageExecutor, IStageExecutor } from '../stage'
 
 const DEFAULT_OPTIONS: FlowOptions = {
-  stopOnError: true,
+  stopOnError: false,
   mode: FlowMode.DEFAULT,
 }
 
@@ -19,6 +19,7 @@ export class Flow {
   private options: FlowOptions
   private stageExecutor: IStageExecutor
   private flow: IFlow
+  public result: FlowResult
 
   constructor(param?: Array<Stage> | FlowOptions, options?: FlowOptions) {
     if (param && param instanceof Array) {
@@ -31,12 +32,44 @@ export class Flow {
 
     this.options = Object.assign(DEFAULT_OPTIONS, options)
 
+    if (
+      this.options.stopOnError === false &&
+      this.options.mode === FlowMode.PIPELINE
+    ) {
+      console.warn(
+        'Some options are incompatible\n',
+        'stopOnError = "false" is incompatible with mode = "PIPELINE". Setting stopOnError to "true"',
+      )
+      this.options.stopOnError = true
+    }
+
     this.stageExecutor = makeStageExecutor(this.options)
+
     this.flow = makeFlow(this.options, this.stageExecutor, this.stages)
   }
 
   async execute(...params: any[]): Promise<FlowResult> {
-    const result = await this.flow.execute(params)
-    return result
+    this.result = await this.flow.execute(params)
+    return this.result
+  }
+
+  async success(stageId: string, callback: Function): Promise<void> {
+    const stageResult = this.result.resultAll.find((result) => {
+      return result.id === stageId && result.state == 'success'
+    })
+    if (!stageResult) {
+      throw new Error('here')
+    }
+    await callback(stageResult.data)
+  }
+
+  async fail(stageId: string, callback: Function): Promise<void> {
+    const stageResult = this.result.resultAll.find((result) => {
+      return result.id === stageId && result.state == 'fail'
+    })
+    if (!stageResult) {
+      throw new Error('here')
+    }
+    await callback(stageResult.data)
   }
 }

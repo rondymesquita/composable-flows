@@ -8,14 +8,14 @@ export class EmailValidator {
 }
 
 export class EmailSender {
-  async send(email: string): Promise<boolean> {
+  async send(email: string): Promise<any> {
     console.log('>> 2.1. sending email to:[%s]', email)
 
     return new Promise((resolve) => {
       setTimeout(() => {
         console.log('>> 2.2. email sent:[%s]', email)
-        resolve(true)
-      }, 700)
+        resolve({ ok: true })
+      }, 200)
     })
   }
 }
@@ -25,21 +25,19 @@ const emailSender = new EmailSender()
 
 ;(async () => {
   const flow = new Flow([
+    emailSender.send,
     { validateEmail: emailValidator.validate },
     { 'send email': emailSender.send },
   ])
-  const { result } = await flow.execute('email@email.com')
+  const { resultAll } = await flow.execute('email@email.com')
 
-  get('send email', ({ success, failure }) => {
-    success((data) => {})
-    failure((error) => {})
+  await flow.success('send email', async (data: any) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        console.log('done send email', data)
+        resolve({})
+      }, 200)
+    })
   })
-
-  get('send email')()
-
-  // result.with('emailValidator.validate', () => {
-
-  // })
-  // const stageResult = result.with('emailValidator.validate')
-  console.log('done', result)
+  console.log('done', resultAll)
 })()

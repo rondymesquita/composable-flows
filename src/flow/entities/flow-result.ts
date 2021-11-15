@@ -1,5 +1,4 @@
 export interface FlowResult {
-  lastResult: any
-  allResults: Array<any>
-  get?: any
+  result: any
+  resultAll: Array<any>
 }

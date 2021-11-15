@@ -2,8 +2,7 @@ import { Stage } from '../../stage/entities'
 import { IStageExecutor } from '../../stage/contracts'
 import { IFlow } from '../contracts'
 import { FlowMode, FlowOptions } from '../entities'
-import { FlowPipeline } from '../flow-pipeline'
-import { FlowDefault } from '../flow-default'
+import { FlowPipeline, FlowDefault } from '../strategies'
 
 export const makeFlow = (
   options: FlowOptions,

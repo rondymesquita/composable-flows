@@ -1,10 +1,6 @@
+type StageFunction = (...params: any[]) => any
 export interface StageContainer {
-  handler: (...params: any[]) => any
-  when?: () => boolean
+  [name: string]: StageFunction
 }
 
-export interface StageContainerShort {
-  [name: string]: (...params: any[]) => any
-}
-
-export type Stage = Function | StageContainer
+export type Stage = StageFunction | StageContainer
