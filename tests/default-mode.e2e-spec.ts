@@ -425,4 +425,40 @@ describe('Flow with default mode', () => {
     expect(syncStageBeta.handle).toBeCalledTimes(1)
     expect(syncStageBeta.handle).toBeCalledWith('email@email.com', 'admin')
   })
+
+  it('should call success handler to get stage result by index', async () => {
+    const syncStageAlpha = {
+      handle: jest.fn().mockResolvedValue({ value: 'alpha-result' }),
+    }
+
+    const syncStageBeta = {
+      handle: jest.fn().mockResolvedValue({ value: 'beta-result' }),
+    }
+
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle])
+    await sut.execute()
+    await sut.ok(0, (data: any) => {
+      expect(data).toEqual({ value: 'alpha-result' })
+    })
+  })
+
+  it('should call success handler to get stage result by name', async () => {
+    const syncStageAlpha = {
+      handle: {
+        'alpha stage name': jest
+          .fn()
+          .mockResolvedValue({ value: 'alpha-result' }),
+      },
+    }
+
+    const syncStageBeta = {
+      handle: jest.fn().mockResolvedValue({ value: 'beta-result' }),
+    }
+
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle])
+    await sut.execute()
+    await sut.ok('alpha stage name', (data: any) => {
+      expect(data).toEqual({ value: 'alpha-result' })
+    })
+  })
 })

@@ -1,7 +1,7 @@
 {
-  "name": "composable-flows",
+  "name": "@round/flow",
   "version": "1.0.0",
-  "description": "My webpack project",
+  "description": "Compose flows with readable interface",
   "main": "./dist/node/index.js",
   "files": [
     "dist/**/*"

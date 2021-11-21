@@ -1,3 +1,4 @@
+import { IndexedStageResult } from './../entities/indexed-stage-result'
 import { FlowOptions } from './../entities/flow-options'
 import { StageParser } from './../parser/stage-parser'
 import { StageResult } from '../../stage/entities'
@@ -19,8 +20,8 @@ export class FlowDefault implements IFlow {
   async execute(param: any): Promise<FlowResult> {
     const isAlways = true
     const shouldSpreadParams = isAlways
-    let stageResult: StageResult | undefined = undefined
-    let resultAll: Array<any> = []
+    let stageResult: StageResult
+    let resultAll: Array<IndexedStageResult> = []
 
     for (let index = 0; index < this.stages.length; index++) {
       const stage = this.stages[index]
@@ -32,16 +33,16 @@ export class FlowDefault implements IFlow {
         shouldSpreadParams,
         param,
       )
-      resultAll.push({ id: name ? name : index, ...stageResult })
+      const id = name ? name : index
+      resultAll.push(new IndexedStageResult(id, stageResult))
 
       if (this.options.isStoppable && stageResult.isError) {
-        //log
         break
       }
     }
 
     const flowResult: FlowResult = {
-      result: stageResult,
+      result: stageResult!,
       resultAll,
     }
 

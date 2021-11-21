@@ -1,17 +1,14 @@
 export class StageResult {
   public readonly isError: boolean
-  private readonly error: Error | undefined
-  private readonly value: any
+  public readonly error: Error | undefined
+  public readonly value: any
 
-  private constructor(isError: boolean, error?: Error, value?: any) {
+  protected constructor(isError: boolean, error?: Error, value?: any) {
     if (isError && value) {
       throw new Error(
         'Error and value are mutually exclusive. Inform only one of them.',
       )
     }
-    // if (!isError && !value) {
-    //   throw new Error('Error or value was not informed. Inform one of them')
-    // }
 
     this.isError = isError
     this.error = error

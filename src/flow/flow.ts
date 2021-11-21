@@ -1,3 +1,4 @@
+import { IndexedStageResult } from './entities/indexed-stage-result'
 import { FlowMode, FlowOptions } from './entities'
 import { makeFlow } from './factories'
 import { FlowResult } from './entities'
@@ -55,23 +56,28 @@ export class Flow {
     return this.result
   }
 
-  async success(stageId: string, callback: Function): Promise<void> {
-    const stageResult = this.result.resultAll.find((result) => {
-      return result.id === stageId && result.state == 'success'
-    })
-    if (!stageResult) {
-      throw new Error('here')
+  async ok(stageId: number | string, callback: Function): Promise<void> {
+    const indexedStageResult: IndexedStageResult | undefined =
+      this.result.resultAll.find((result) => {
+        return result.id === stageId && !result.isError
+      })
+    console.log(this.result)
+
+    if (!indexedStageResult) {
+      const error = new Error(`No stage found for stageId ${stageId}`)
+      await callback(error)
+    } else {
+      await callback(indexedStageResult.getValue())
     }
-    await callback(stageResult.data)
   }
 
-  async fail(stageId: string, callback: Function): Promise<void> {
-    const stageResult = this.result.resultAll.find((result) => {
-      return result.id === stageId && result.state == 'fail'
-    })
-    if (!stageResult) {
-      throw new Error('here')
-    }
-    await callback(stageResult.data)
-  }
+  // async fail(stageId: string, callback: Function): Promise<void> {
+  //   const stageResult = this.result.resultAll.find((result) => {
+  //     return result.id === stageId && result.state == 'fail'
+  //   })
+  //   if (!stageResult) {
+  //     throw new Error('here')
+  //   }
+  //   await callback(stageResult.data)
+  // }
 }
