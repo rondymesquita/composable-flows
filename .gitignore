@@ -2,3 +2,4 @@ node_modules/
 dist/
 dist-browser/
 dist-node/
+docs/

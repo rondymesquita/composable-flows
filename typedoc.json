@@ -1,0 +1,5 @@
+{
+  "entryPoints": ["src/flow/index.ts"],
+  "out": "docs",
+  "exclude": ["src/flow/factories/**/*.ts"]
+}
