@@ -121,6 +121,7 @@ describe('Flow with default mode', () => {
 
     const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle], {
       isStoppable: false,
+      isSafe: true,
     })
 
     const result = await sut.execute()
@@ -153,86 +154,7 @@ describe('Flow with default mode', () => {
     expect(syncStageBeta.handle).toBeCalledWith()
   })
 
-  it('should stop the flow on stage fail when isStoppable is true (by default)', async () => {
-    const syncStageAlpha = {
-      handle: jest.fn().mockImplementation(() => {
-        return Promise.reject(new Error('alpha stage error'))
-      }),
-    }
-
-    const syncStageBeta = {
-      handle: jest.fn().mockImplementation(() => {
-        return Promise.resolve('beta-result')
-      }),
-    }
-
-    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle])
-
-    expect(syncStageAlpha.handle).toBeCalledTimes(0)
-    expect(syncStageBeta.handle).toBeCalledTimes(0)
-
-    const result = await sut.execute()
-    expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledTimes(0)
-    expect(result).toEqual({
-      result: {
-        error: new Error('alpha stage error'),
-        isError: true,
-        value: undefined,
-      },
-      resultAll: [
-        {
-          error: new Error('alpha stage error'),
-          id: 0,
-          isError: true,
-          value: undefined,
-        },
-      ],
-    })
-  })
-
-  it('should stop the flow on stage fail when isStoppable is true (by param)', async () => {
-    const syncStageAlpha = {
-      handle: jest.fn().mockImplementation(() => {
-        return Promise.reject(new Error('alpha stage error'))
-      }),
-    }
-
-    const syncStageBeta = {
-      handle: jest.fn().mockImplementation(() => {
-        return Promise.resolve('beta-result')
-      }),
-    }
-
-    const options: FlowOptions = {
-      isStoppable: true,
-    }
-    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle], options)
-
-    expect(syncStageAlpha.handle).toBeCalledTimes(0)
-    expect(syncStageBeta.handle).toBeCalledTimes(0)
-
-    const result = await sut.execute()
-    expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledTimes(0)
-    expect(result).toEqual({
-      result: {
-        error: new Error('alpha stage error'),
-        isError: true,
-        value: undefined,
-      },
-      resultAll: [
-        {
-          error: new Error('alpha stage error'),
-          id: 0,
-          isError: true,
-          value: undefined,
-        },
-      ],
-    })
-  })
-
-  it('should not stop the flow on stage fail when isStoppable is false (by param)', async () => {
+  it('should continue the flow on stage fail when isStoppable is false (by param)', async () => {
     const syncStageAlpha = {
       handle: jest.fn().mockImplementation(() => {
         return Promise.reject(new Error('alpha stage error'))
@@ -274,6 +196,85 @@ describe('Flow with default mode', () => {
           id: 1,
           isError: false,
           value: 'beta-result',
+        },
+      ],
+    })
+  })
+
+  it('should not continue the flow on stage fail when isStoppable is true (by default)', async () => {
+    const syncStageAlpha = {
+      handle: jest.fn().mockImplementation(() => {
+        return Promise.reject(new Error('alpha stage error'))
+      }),
+    }
+
+    const syncStageBeta = {
+      handle: jest.fn().mockImplementation(() => {
+        return Promise.resolve('beta-result')
+      }),
+    }
+
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle])
+
+    expect(syncStageAlpha.handle).toBeCalledTimes(0)
+    expect(syncStageBeta.handle).toBeCalledTimes(0)
+
+    const result = await sut.execute()
+    expect(syncStageAlpha.handle).toBeCalledTimes(1)
+    expect(syncStageBeta.handle).toBeCalledTimes(0)
+    expect(result).toEqual({
+      result: {
+        error: new Error('alpha stage error'),
+        isError: true,
+        value: undefined,
+      },
+      resultAll: [
+        {
+          error: new Error('alpha stage error'),
+          id: 0,
+          isError: true,
+          value: undefined,
+        },
+      ],
+    })
+  })
+
+  it('should not continue the flow on stage fail when isStoppable is true (by param)', async () => {
+    const syncStageAlpha = {
+      handle: jest.fn().mockImplementation(() => {
+        return Promise.reject(new Error('alpha stage error'))
+      }),
+    }
+
+    const syncStageBeta = {
+      handle: jest.fn().mockImplementation(() => {
+        return Promise.resolve('beta-result')
+      }),
+    }
+
+    const options: FlowOptions = {
+      isStoppable: true,
+    }
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle], options)
+
+    expect(syncStageAlpha.handle).toBeCalledTimes(0)
+    expect(syncStageBeta.handle).toBeCalledTimes(0)
+
+    const result = await sut.execute()
+    expect(syncStageAlpha.handle).toBeCalledTimes(1)
+    expect(syncStageBeta.handle).toBeCalledTimes(0)
+    expect(result).toEqual({
+      result: {
+        error: new Error('alpha stage error'),
+        isError: true,
+        value: undefined,
+      },
+      resultAll: [
+        {
+          error: new Error('alpha stage error'),
+          id: 0,
+          isError: true,
+          value: undefined,
         },
       ],
     })
