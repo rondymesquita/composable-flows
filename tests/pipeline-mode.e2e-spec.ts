@@ -1,3 +1,4 @@
+import { FlowOptions } from './../src/flow/entities/flow-options'
 import { Flow, FlowMode } from '../src'
 
 describe('When FlowMode is PIPELINE', () => {
@@ -148,10 +149,11 @@ describe('When FlowMode is PIPELINE', () => {
     expect(syncStageGamma.handle).toBeCalledWith('beta-result')
   })
 
-  it('should stop the flow stages when fails  stopOnError is false (by default)', async () => {
+  it('should not continue the flow when a stage fails since isStoppable=false is incompatible with Pipeline mode', async () => {
+    const fakeError = new Error('stage error')
     const syncStageAlpha = {
       handle: jest.fn().mockImplementation(() => {
-        throw new Error('stage error')
+        throw fakeError
       }),
     }
 
@@ -159,24 +161,39 @@ describe('When FlowMode is PIPELINE', () => {
       handle: jest.fn().mockReturnValue('beta-result'),
     }
 
-    const options = {
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle], {
       mode: FlowMode.PIPELINE,
-    }
+      isStoppable: false,
+    })
 
-    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle], options)
-
-    await expect(sut.execute()).rejects.toEqual(new Error('stage error'))
+    const result = await sut.execute()
+    expect(result).toEqual({
+      result: {
+        error: new Error('stage error'),
+        isError: true,
+        value: undefined,
+      },
+      resultAll: [
+        {
+          error: new Error('stage error'),
+          id: 0,
+          isError: true,
+          value: undefined,
+        },
+      ],
+    })
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
     expect(syncStageAlpha.handle).toBeCalledWith()
 
-    expect(syncStageBeta.handle).not.toBeCalled()
+    expect(syncStageBeta.handle).toBeCalledTimes(0)
   })
 
-  it('should stop the flow stages when fails when stopOnError is true', async () => {
+  it('should not continue the flow when a stage fails since isStoppable=true (by default)', async () => {
+    const fakeError = new Error('stage error')
     const syncStageAlpha = {
       handle: jest.fn().mockImplementation(() => {
-        throw new Error('stage error')
+        throw fakeError
       }),
     }
 
@@ -184,18 +201,180 @@ describe('When FlowMode is PIPELINE', () => {
       handle: jest.fn().mockReturnValue('beta-result'),
     }
 
-    const options = {
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle], {
       mode: FlowMode.PIPELINE,
-      stopOnError: true,
-    }
+    })
 
-    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle], options)
-
-    await expect(sut.execute()).rejects.toEqual(new Error('stage error'))
+    const result = await sut.execute()
+    expect(result).toEqual({
+      result: {
+        error: new Error('stage error'),
+        isError: true,
+        value: undefined,
+      },
+      resultAll: [
+        {
+          error: new Error('stage error'),
+          id: 0,
+          isError: true,
+          value: undefined,
+        },
+      ],
+    })
 
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
     expect(syncStageAlpha.handle).toBeCalledWith()
 
-    expect(syncStageBeta.handle).not.toBeCalled()
+    expect(syncStageBeta.handle).toBeCalledTimes(0)
+  })
+
+  it('should not continue the flow when a stage fails since isStoppable=true (by param)', async () => {
+    const fakeError = new Error('stage error')
+    const syncStageAlpha = {
+      handle: jest.fn().mockImplementation(() => {
+        throw fakeError
+      }),
+    }
+
+    const syncStageBeta = {
+      handle: jest.fn().mockReturnValue('beta-result'),
+    }
+
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle], {
+      mode: FlowMode.PIPELINE,
+      isStoppable: true,
+    })
+
+    const result = await sut.execute()
+    expect(result).toEqual({
+      result: {
+        error: new Error('stage error'),
+        isError: true,
+        value: undefined,
+      },
+      resultAll: [
+        {
+          error: new Error('stage error'),
+          id: 0,
+          isError: true,
+          value: undefined,
+        },
+      ],
+    })
+
+    expect(syncStageAlpha.handle).toBeCalledTimes(1)
+    expect(syncStageAlpha.handle).toBeCalledWith()
+
+    expect(syncStageBeta.handle).toBeCalledTimes(0)
+  })
+
+  it('should throw exception on execute when isSafe is false', async () => {
+    const syncStageAlpha = {
+      handle: jest.fn().mockImplementation(() => {
+        return Promise.reject(new Error('alpha stage error'))
+      }),
+    }
+
+    const syncStageBeta = {
+      handle: jest.fn().mockImplementation(() => {
+        return Promise.resolve('beta-result')
+      }),
+    }
+
+    const options: FlowOptions = {
+      mode: FlowMode.PIPELINE,
+      isSafe: false,
+    }
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle], options)
+
+    expect(syncStageAlpha.handle).toBeCalledTimes(0)
+    expect(syncStageBeta.handle).toBeCalledTimes(0)
+
+    await expect(sut.execute()).rejects.toEqual(new Error('alpha stage error'))
+    expect(syncStageAlpha.handle).toBeCalledTimes(1)
+    expect(syncStageBeta.handle).toBeCalledTimes(0)
+  })
+
+  it('should not throw an exception on execute when isSafe is true (by default)', async () => {
+    const syncStageAlpha = {
+      handle: jest.fn().mockImplementation(() => {
+        return Promise.reject(new Error('alpha stage error'))
+      }),
+    }
+
+    const syncStageBeta = {
+      handle: jest.fn().mockImplementation(() => {
+        return Promise.resolve('beta-result')
+      }),
+    }
+    const options: FlowOptions = {
+      mode: FlowMode.PIPELINE,
+    }
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle], options)
+
+    expect(syncStageAlpha.handle).toBeCalledTimes(0)
+    expect(syncStageBeta.handle).toBeCalledTimes(0)
+
+    const result = await sut.execute()
+    expect(syncStageAlpha.handle).toBeCalledTimes(1)
+    expect(syncStageBeta.handle).toBeCalledTimes(0)
+
+    expect(result).toEqual({
+      result: {
+        error: new Error('alpha stage error'),
+        isError: true,
+        value: undefined,
+      },
+      resultAll: [
+        {
+          error: new Error('alpha stage error'),
+          id: 0,
+          isError: true,
+          value: undefined,
+        },
+      ],
+    })
+  })
+
+  it('should not throw an exception on execute when isSafe is true (by param)', async () => {
+    const syncStageAlpha = {
+      handle: jest.fn().mockImplementation(() => {
+        return Promise.reject(new Error('alpha stage error'))
+      }),
+    }
+
+    const syncStageBeta = {
+      handle: jest.fn().mockImplementation(() => {
+        return Promise.resolve('beta-result')
+      }),
+    }
+    const options: FlowOptions = {
+      mode: FlowMode.PIPELINE,
+      isSafe: true,
+    }
+    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle], options)
+
+    expect(syncStageAlpha.handle).toBeCalledTimes(0)
+    expect(syncStageBeta.handle).toBeCalledTimes(0)
+
+    const result = await sut.execute()
+    expect(syncStageAlpha.handle).toBeCalledTimes(1)
+    expect(syncStageBeta.handle).toBeCalledTimes(0)
+
+    expect(result).toEqual({
+      result: {
+        error: new Error('alpha stage error'),
+        isError: true,
+        value: undefined,
+      },
+      resultAll: [
+        {
+          error: new Error('alpha stage error'),
+          id: 0,
+          isError: true,
+          value: undefined,
+        },
+      ],
+    })
   })
 })

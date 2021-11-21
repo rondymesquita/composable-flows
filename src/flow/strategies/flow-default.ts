@@ -1,3 +1,4 @@
+import { FlowOptions } from './../entities/flow-options'
 import { StageParser } from './../parser/stage-parser'
 import { StageResult } from '../../stage/entities'
 import { Stage } from '../../stage/entities/stage'
@@ -9,6 +10,7 @@ export class FlowDefault implements IFlow {
   protected stageParser: StageParser
 
   constructor(
+    private readonly options: FlowOptions,
     private readonly stageExecutor: IStageExecutor,
     private readonly stages: Array<Stage>,
   ) {
@@ -30,8 +32,12 @@ export class FlowDefault implements IFlow {
         shouldSpreadParams,
         param,
       )
-
       resultAll.push({ id: name ? name : index, ...stageResult })
+
+      if (this.options.isStoppable && stageResult.isError) {
+        //log
+        break
+      }
     }
 
     const flowResult: FlowResult = {

@@ -1,3 +1,4 @@
+import { FlowOptions } from './../entities/flow-options'
 import { StageResult } from '../../stage/entities/stage-result'
 import { Stage } from '../../stage/entities'
 import { FlowResult } from '../entities'
@@ -8,6 +9,7 @@ import { StageParser } from './../parser/stage-parser'
 export class FlowPipeline implements IFlow {
   protected stageParser: StageParser
   constructor(
+    private readonly options: FlowOptions,
     private readonly stageExecutor: IStageExecutor,
     private readonly stages: Array<Stage>,
   ) {
@@ -34,16 +36,9 @@ export class FlowPipeline implements IFlow {
 
       resultAll.push({ id: name ? name : index, ...stageResult })
 
-      // if (lastStageResult.isSuccess) {
-      //   allResults.push(lastStageResult.getValue())
-      // } else {
-      //   return {
-      //     lastResult: allResults.length
-      //       ? allResults[allResults.length - 1].getvalue()
-      //       : undefined,
-      //     allResults,
-      //   }
-      // }
+      if (this.options.isStoppable && stageResult.isError) {
+        break
+      }
     }
 
     const flowResult: FlowResult = {

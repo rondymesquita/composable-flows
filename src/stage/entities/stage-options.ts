@@ -1,3 +1,4 @@
 export interface StageOptions {
-  stopOnError?: boolean
+  isStoppable?: boolean
+  isSafe?: boolean
 }

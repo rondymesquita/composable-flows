@@ -20,7 +20,7 @@ export class StageExecutor implements IStageExecutor {
       }
     } catch (err: any) {
       console.warn(err)
-      if (this.options.stopOnError) {
+      if (!this.options.isSafe) {
         console.error(err)
         throw err
       }

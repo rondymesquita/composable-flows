@@ -10,8 +10,8 @@ export const makeFlow = (
   stages: Array<Stage>,
 ): IFlow => {
   if (options.mode === FlowMode.PIPELINE) {
-    return new FlowPipeline(stageExecutor, stages)
+    return new FlowPipeline(options, stageExecutor, stages)
   } else {
-    return new FlowDefault(stageExecutor, stages)
+    return new FlowDefault(options, stageExecutor, stages)
   }
 }

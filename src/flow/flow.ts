@@ -5,13 +5,8 @@ import { Stage } from '../stage/entities'
 import { IFlow } from './contracts'
 import { makeStageExecutor, IStageExecutor } from '../stage'
 
-const DEFAULT_OPTIONS: FlowOptions = {
-  stopOnError: false,
-  mode: FlowMode.DEFAULT,
-}
-
 const isOptionsInstance = (value: any) => {
-  return 'stopOnError' in value
+  return 'isSafe' in value && 'isStoppable' in value
 }
 
 export class Flow {
@@ -21,7 +16,13 @@ export class Flow {
   private flow: IFlow
   public result: FlowResult
 
-  constructor(param?: Array<Stage> | FlowOptions, options?: FlowOptions) {
+  constructor(param: Array<Stage> | FlowOptions, options?: FlowOptions) {
+    const DEFAULT_OPTIONS: FlowOptions = {
+      isStoppable: true,
+      isSafe: true,
+      mode: FlowMode.DEFAULT,
+    }
+
     if (param && param instanceof Array) {
       this.stages = param
     }
@@ -30,17 +31,18 @@ export class Flow {
       this.options = param as FlowOptions
     }
 
+    // this.stages = stages
     this.options = Object.assign(DEFAULT_OPTIONS, options)
 
     if (
-      this.options.stopOnError === false &&
+      this.options.isStoppable === false &&
       this.options.mode === FlowMode.PIPELINE
     ) {
       console.warn(
         'Some options are incompatible\n',
-        'stopOnError = "false" is incompatible with mode = "PIPELINE". Setting stopOnError to "true"',
+        'isStoppable = "false" is incompatible with mode = "PIPELINE". Setting isStoppable to "true"',
       )
-      this.options.stopOnError = true
+      this.options.isStoppable = true
     }
 
     this.stageExecutor = makeStageExecutor(this.options)
