@@ -1,3 +1,4 @@
+import { IndexedStageResult } from './../entities/indexed-stage-result'
 import { FlowOptions } from './../entities/flow-options'
 import { StageResult } from '../../stage/entities/stage-result'
 import { Stage } from '../../stage/entities'
@@ -17,9 +18,8 @@ export class FlowPipeline implements IFlow {
   }
   async execute(param: any): Promise<FlowResult | any> {
     let stageResult: StageResult = StageResult.ok(param)
-    const allResults: Array<any> = []
 
-    let resultAll: Array<any> = []
+    let resultAll: Array<IndexedStageResult> = []
 
     for (let index = 0; index < this.stages.length; index++) {
       const stage: Stage = this.stages[index]
@@ -34,7 +34,8 @@ export class FlowPipeline implements IFlow {
         stageResult.getValue(),
       )
 
-      resultAll.push({ id: name ? name : index, ...stageResult })
+      const id = name ? name : index
+      resultAll.push(new IndexedStageResult(id, stageResult))
 
       if (this.options.isStoppable && stageResult.isError) {
         break

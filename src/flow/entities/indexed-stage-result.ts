@@ -1,4 +1,3 @@
-// import { StageResult } from './../../stage/entities/stage-result';
 import { StageResult } from '../../stage/entities'
 export class IndexedStageResult extends StageResult {
   constructor(public id: string | number, stageResult: StageResult) {

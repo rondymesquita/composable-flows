@@ -61,13 +61,41 @@ export class Flow {
       this.result.resultAll.find((result) => {
         return result.id === stageId && !result.isError
       })
-    console.log(this.result)
 
     if (!indexedStageResult) {
       const error = new Error(`No stage found for stageId ${stageId}`)
       await callback(error)
     } else {
       await callback(indexedStageResult.getValue())
+    }
+  }
+
+  async anyOk(callback: Function): Promise<void> {
+    const isSuccess = (result: IndexedStageResult) => {
+      return !result.isError
+    }
+
+    const isAnyOk = this.result.resultAll.some(isSuccess)
+
+    if (isAnyOk) {
+      await callback(
+        this.result.resultAll
+          .filter(isSuccess)
+          .map((indexedResult) => indexedResult.getValue()),
+      )
+    }
+  }
+
+  async allOk(callback: Function): Promise<void> {
+    const isSuccess = (result: IndexedStageResult) => {
+      return !result.isError
+    }
+    const isAllOk = this.result.resultAll.every(isSuccess)
+
+    if (isAllOk) {
+      await callback(
+        this.result.resultAll.map((indexedResult) => indexedResult.getValue()),
+      )
     }
   }
 
