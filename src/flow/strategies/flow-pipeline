@@ -1,11 +1,11 @@
-import { IndexedStageResult } from './../entities/indexed-stage-result'
-import { FlowOptions } from './../entities/flow-options'
+import { IndexedStageResult } from '../entities/indexed-stage-result'
+import { FlowOptions } from '../entities/flow-options'
 import { StageResult } from '../../stage/entities/stage-result'
 import { Stage } from '../../stage/entities'
 import { FlowResult } from '../entities'
 import { IStageExecutor } from '../../stage/contracts/istage-executor'
 import { IFlow } from '../contracts/iflow'
-import { StageParser } from './../parser/stage-parser'
+import { StageParser } from '../parser/stage-parser'
 
 export class FlowPipeline implements IFlow {
   protected stageParser: StageParser

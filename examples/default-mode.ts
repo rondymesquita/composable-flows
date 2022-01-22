@@ -1,9 +1,9 @@
-import { ComposableFlow } from '../src'
+import { Flow } from '../src'
 
 export class EmailValidator {
-  validate(email: string): boolean {
+  validate(email: number): boolean {
     console.log('>> 1.1 validating email', email)
-    return email.includes('@email.com')
+    return false
   }
 }
 
@@ -23,7 +23,7 @@ export class EmailSender {
 const emailValidator = new EmailValidator()
 const emailSender = new EmailSender()
 
-const flow = new ComposableFlow([emailValidator.validate, emailSender.send])
+const flow = new Flow<string, any>([emailValidator.validate, emailSender.send])
 
 flow.execute('email@email.com').then((lastResult) => {
   console.log('done', lastResult)

@@ -1,0 +1,30 @@
+{
+  "hooks": {},
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": "conventionalcommits",
+      "writerOpts": {
+        "groupBy": "type"
+      }
+    }
+  },
+  "git": {
+    "requireCleanWorkingDir": false,
+    "requireBranch": false,
+    "requireUpstream": false,
+    "requireCommits": false,
+    "addUntrackedFiles": false,
+    "commit": false,
+    "tag": false,
+    "push": false
+  },
+  "npm": {
+    "publish": false
+  },
+  "github": {
+    "release": false
+  },
+  "gitlab": {
+    "release": false
+  }
+}

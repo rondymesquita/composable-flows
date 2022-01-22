@@ -1,11 +1,19 @@
-import { ComposableFlow, Mode } from '../src'
+import { Flow, FlowMode } from '../src'
 
+interface UserInput {
+  email: string
+  role: string
+}
 export class GetUserInfo {
-  get(email: string, role: string): any {
-    console.log('>> 1.1 getting user email:[%s] role:[%s]', email, role)
+  get(userInput: UserInput): any {
+    console.log(
+      '>> 1.1 getting user email:[%s] role:[%s]',
+      userInput.email,
+      userInput.email,
+    )
     return {
       id: 1,
-      email,
+      email: userInput.email,
     }
   }
 }
@@ -44,14 +52,14 @@ const emailSender = new EmailSender()
 const database = new Database()
 
 const options = {
-  mode: Mode.PIPELINE,
+  mode: FlowMode.PIPELINE,
 }
 
-const flow = new ComposableFlow(
+const flow = new Flow(
   [getUserInfo.get, emailSender.send, database.storeLog],
   options,
 )
 
-flow.execute('email@email.com', 'admin').then((lastResult) => {
+flow.execute({ email: 'email@email.com', role: 'admin' }).then((lastResult) => {
   console.log('done', lastResult)
 })

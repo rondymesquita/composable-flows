@@ -1,6 +1,6 @@
 {
-  "name": "@round/flow",
-  "version": "1.0.0",
+  "name": "composable-flows",
+  "version": "1.10.0",
   "description": "Compose flows with readable interface",
   "main": "./dist/node/index.js",
   "files": [
@@ -18,13 +18,15 @@
     "dev:web": "webpack serve",
     "build": "tsc",
     "dev:node": "nodemon -w ./src ./src/index.ts",
-    "docs": "typedoc"
+    "docs": "typedoc",
+    "release": "release-it"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
+    "@release-it/conventional-changelog": "^3.3.0",
     "@types/jest": "^27.0.2",
     "@webpack-cli/generators": "^2.4.1",
     "expose-loader": "^3.1.0",
@@ -32,6 +34,7 @@
     "jest": "^27.3.1",
     "nodemon": "^2.0.14",
     "prettier": "^2.4.1",
+    "release-it": "^14.11.8",
     "ts-jest": "^27.0.7",
     "ts-loader": "^9.2.6",
     "ts-node": "^10.4.0",

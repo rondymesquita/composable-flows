@@ -1,4 +1,4 @@
-import { ComposableFlow, Mode } from '../src'
+import { Flow, FlowMode } from '../src'
 export class GetUserInfo {
   get(email: string, role: string): any {
     console.log('>> 1.1 getting user email:[%s] role:[%s]', email, role)
@@ -43,10 +43,10 @@ const emailSender = new EmailSender()
 const database = new Database()
 
 const options = {
-  mode: Mode.PIPELINE,
+  mode: FlowMode.PIPELINE,
 }
 
-const flow = new ComposableFlow(
+const flow = new Flow(
   [
     getUserInfo.get.bind(getUserInfo, 'email@email.com', 'admin'),
     emailSender.send,

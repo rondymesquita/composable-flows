@@ -1,4 +1,4 @@
-import { ComposableFlow } from '../src'
+import { Flow } from '../src'
 
 export class EmailValidator {
   validate(email: string): boolean {
@@ -23,7 +23,7 @@ export class EmailSender {
 const emailValidator = new EmailValidator()
 const emailSender = new EmailSender()
 
-const flow = new ComposableFlow([
+const flow = new Flow([
   () => emailValidator.validate('email@email.com'),
   () => emailSender.send('email@email.com', '# hello'),
 ])

@@ -1,6 +1,6 @@
 import { Stage } from '../../stage/entities/stage'
-export class StageParser {
-  parse(stage: Stage): any {
+export class StageParser<I> {
+  parse(stage: Stage<I>): any {
     let stageFunction: Function
 
     if (typeof stage === 'object') {

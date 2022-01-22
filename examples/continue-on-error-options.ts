@@ -1,4 +1,4 @@
-import { ComposableFlow } from '../src'
+import { Flow } from '../src'
 
 export class GetUserInfo {
   get(email: string, role: string): any {
@@ -19,7 +19,7 @@ const emailSender = new EmailSender()
 const options = {
   stopOnError: false,
 }
-const flow = new ComposableFlow(
+const flow = new Flow(
   [
     () => getUserInfo.get('email@email.com', 'admin'),
     () => emailSender.send('email@email.com', '#hello'),

@@ -7,15 +7,15 @@ import { FlowResult } from '../entities'
 import { IStageExecutor } from '../../stage/contracts/istage-executor'
 import { IFlow } from '../contracts/iflow'
 
-export class FlowDefault implements IFlow {
-  protected stageParser: StageParser
+export class FlowDefault<I> implements IFlow {
+  protected stageParser: StageParser<I>
 
   constructor(
     private readonly options: FlowOptions,
     private readonly stageExecutor: IStageExecutor,
-    private readonly stages: Array<Stage>,
+    private readonly stages: Array<Stage<I>>,
   ) {
-    this.stageParser = new StageParser()
+    this.stageParser = new StageParser<I>()
   }
   async execute(param: any): Promise<FlowResult> {
     const isAlways = true
