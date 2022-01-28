@@ -15,12 +15,11 @@ export class FlowDefault<I> implements IFlow {
     this.stageParser = new StageParser<I>()
   }
   async execute(param: any): Promise<FlowResult> {
-    const isAlways = true
     let stageResult: StageResult
     let resultAll: Array<IndexedStageResult> = []
 
     for (let index = 0; index < this.stages.length; index++) {
-      const stage = this.stages[index]
+      const stage: Stage<I> = this.stages[index]
 
       const { stageFunction, name } = this.stageParser.parse(stage)
 

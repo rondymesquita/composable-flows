@@ -31,7 +31,7 @@ const emailSender = new EmailSender()
   ])
   const { resultAll } = await flow.execute('email@email.com')
 
-  await flow.success('send email', async (data: any) => {
+  await flow.ok('send email', async (data: any) => {
     return new Promise((resolve) => {
       setTimeout(() => {
         console.log('done send email', data)

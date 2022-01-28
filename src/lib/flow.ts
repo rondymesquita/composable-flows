@@ -4,7 +4,7 @@ import { FlowOptions } from './flow-options'
 import { makeFlow, makeStageRunner } from '../factories'
 import { IFlow, IStageRunner } from '../contracts'
 
-export class Flow<I extends any, O = any[]> {
+export class Flow<I extends any> {
   private stageExecutor: IStageRunner
   private flow: IFlow
   public result: FlowResult

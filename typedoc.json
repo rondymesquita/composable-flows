@@ -1,5 +1,8 @@
 {
-  "entryPoints": ["src/flow/index.ts"],
+  "entryPoints": ["src/lib/index.ts"],
   "out": "docs",
-  "exclude": ["src/flow/factories/**/*.ts"]
+  "exclude": ["src/factories/**/*.ts"],
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeInternal": true
 }

@@ -1,6 +1,6 @@
-const { ComposableFlow } = require('composable-flows')
+const { Flow } = require('composable-flows')
 
-const flow = new ComposableFlow([
+const flow = new Flow([
   () => console.log('stage 1'),
   () => console.log('stage 2'),
 ])
