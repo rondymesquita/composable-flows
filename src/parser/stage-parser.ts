@@ -1,4 +1,4 @@
-import { Stage } from '../../stage/entities/stage'
+import { Stage } from '../entities'
 export class StageParser<I> {
   parse(stage: Stage<I>): any {
     let stageFunction: Function

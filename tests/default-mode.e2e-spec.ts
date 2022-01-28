@@ -1,6 +1,4 @@
-import { FlowOptions } from './../src/flow/entities/flow-options'
-import { Flow } from '../src'
-
+import { FlowOptions, Flow } from '../src'
 describe('Flow with default mode', () => {
   it('should execute when passing a single stage', async () => {
     const syncStageAlpha = {
@@ -383,47 +381,6 @@ describe('Flow with default mode', () => {
         },
       ],
     })
-  })
-
-  it('should pass multiples parameters for the stage', async () => {
-    const syncStageAlpha = {
-      handle: jest.fn().mockReturnValue('alpha-result'),
-    }
-
-    const syncStageBeta = {
-      handle: jest.fn().mockReturnValue('beta-result'),
-    }
-
-    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle])
-
-    const result = await sut.execute('email@email.com', 'admin')
-    expect(result).toEqual({
-      result: {
-        error: undefined,
-        isError: false,
-        value: 'beta-result',
-      },
-      resultAll: [
-        {
-          error: undefined,
-          id: 0,
-          isError: false,
-          value: 'alpha-result',
-        },
-        {
-          error: undefined,
-          id: 1,
-          isError: false,
-          value: 'beta-result',
-        },
-      ],
-    })
-
-    expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith('email@email.com', 'admin')
-
-    expect(syncStageBeta.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledWith('email@email.com', 'admin')
   })
 
   it('should call success handler to get stage result by index', async () => {

@@ -1,18 +1,15 @@
-import { IndexedStageResult } from '../entities/indexed-stage-result'
-import { FlowOptions } from '../entities/flow-options'
-import { StageResult } from '../../stage/entities/stage-result'
-import { Stage } from '../../stage/entities'
-import { FlowResult } from '../entities'
-import { IStageExecutor } from '../../stage/contracts/istage-executor'
-import { IFlow } from '../contracts/iflow'
-import { StageParser } from '../parser/stage-parser'
+import { IndexedStageResult } from '../entities'
+import { FlowOptions } from '../lib'
+import { StageParser } from '../parser'
+import { StageResult, FlowResult, Stage } from '../entities'
+import { IStageRunner, IFlow } from '../contracts'
 
-export class FlowPipeline implements IFlow {
-  protected stageParser: StageParser
+export class FlowPipeline<I> implements IFlow {
+  protected stageParser: StageParser<I>
   constructor(
     private readonly options: FlowOptions,
-    private readonly stageExecutor: IStageExecutor,
-    private readonly stages: Array<Stage>,
+    private readonly stageExecutor: IStageRunner,
+    private readonly stages: Array<Stage<I>>,
   ) {
     this.stageParser = new StageParser()
   }
@@ -22,15 +19,11 @@ export class FlowPipeline implements IFlow {
     let resultAll: Array<IndexedStageResult> = []
 
     for (let index = 0; index < this.stages.length; index++) {
-      const stage: Stage = this.stages[index]
+      const stage = this.stages[index]
       const { stageFunction, name } = this.stageParser.parse(stage)
-
-      const isFirst = index === 0
-      const shouldSpreadParams = isFirst
 
       stageResult = await this.stageExecutor.execute(
         stageFunction,
-        shouldSpreadParams,
         stageResult.getValue(),
       )
 

@@ -1,23 +1,14 @@
-import { IndexedStageResult } from './entities/indexed-stage-result'
-import { FlowMode, FlowOptions } from './entities'
-import { makeFlow } from './factories'
-import { FlowResult } from './entities'
-import { Stage } from '../stage/entities'
-import { IFlow } from './contracts'
-import { makeStageExecutor, IStageExecutor } from '../stage'
-
-const isOptionsInstance = (value: any) => {
-  return 'isSafe' in value && 'isStoppable' in value
-}
+import { IndexedStageResult, FlowResult, Stage } from '../entities'
+import { FlowMode } from './flow-mode'
+import { FlowOptions } from './flow-options'
+import { makeFlow, makeStageRunner } from '../factories'
+import { IFlow, IStageRunner } from '../contracts'
 
 export class Flow<I extends any, O = any[]> {
-  // private stages: Array<Stage> = []
-  // private options: FlowOptions
-  private stageExecutor: IStageExecutor
+  private stageExecutor: IStageRunner
   private flow: IFlow
   public result: FlowResult
 
-  // constructor(stages: Array<Stage> | FlowOptions, options?: FlowOptions) {
   constructor(private stages: Array<Stage<I>>, private options?: FlowOptions) {
     const DEFAULT_OPTIONS: FlowOptions = {
       isStoppable: true,
@@ -25,17 +16,6 @@ export class Flow<I extends any, O = any[]> {
       mode: FlowMode.DEFAULT,
     }
 
-    // if (param && param instanceof Array) {
-    //   this.stages = param
-    // }
-
-    // if (param && isOptionsInstance(param)) {
-    //   this.options = param as FlowOptions
-    // }
-
-    console.log(this.stages)
-
-    // this.stages = stages
     this.options = Object.assign(DEFAULT_OPTIONS, options)
 
     if (
@@ -49,13 +29,12 @@ export class Flow<I extends any, O = any[]> {
       this.options.isStoppable = true
     }
 
-    this.stageExecutor = makeStageExecutor(this.options)
+    this.stageExecutor = makeStageRunner(this.options)
 
     this.flow = makeFlow<I>(this.options, this.stageExecutor, this.stages)
   }
 
   async execute(params?: I): Promise<FlowResult> {
-    // async execute(...params: any[]): Promise<FlowResult> {
     this.result = await this.flow.execute(params)
     return this.result
   }
