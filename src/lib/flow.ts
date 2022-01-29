@@ -3,6 +3,7 @@ import { FlowMode } from './flow-mode'
 import { FlowOptions } from './flow-options'
 import { makeFlow, makeStageRunner } from '../factories'
 import { IFlow, IStageRunner } from '../contracts'
+import { CallbackOk, CallbackAllOk, CallbackAnyOk } from './callbacks'
 
 export class Flow<I extends any> {
   private stageExecutor: IStageRunner
@@ -10,13 +11,12 @@ export class Flow<I extends any> {
   public result: FlowResult
 
   constructor(private stages: Array<Stage<I>>, private options?: FlowOptions) {
-    const DEFAULT_OPTIONS: FlowOptions = {
-      isStoppable: true,
+    const DEFAULT_FLOW_OPTIONS: FlowOptions = {
+      isStoppable: false,
       isSafe: true,
       mode: FlowMode.DEFAULT,
     }
-
-    this.options = Object.assign(DEFAULT_OPTIONS, options)
+    this.options = Object.assign(DEFAULT_FLOW_OPTIONS, options)
 
     if (
       this.options.isStoppable === false &&
@@ -39,7 +39,10 @@ export class Flow<I extends any> {
     return this.result
   }
 
-  async ok(stageId: number | string, callback: Function): Promise<void> {
+  /**
+   * Calls the callback with the result of the provided stage name or its index.
+   */
+  async ok(stageId: number | string, callback: CallbackOk): Promise<void> {
     const indexedStageResult: IndexedStageResult | undefined =
       this.result.resultAll.find((result) => {
         return result.id === stageId && !result.isError
@@ -53,7 +56,10 @@ export class Flow<I extends any> {
     }
   }
 
-  async anyOk(callback: Function): Promise<void> {
+  /**
+   * Calls the callback with the results of stages when any stage runs without error.
+   */
+  async anyOk(callback: CallbackAnyOk): Promise<void> {
     const isSuccess = (result: IndexedStageResult) => {
       return !result.isError
     }
@@ -69,7 +75,10 @@ export class Flow<I extends any> {
     }
   }
 
-  async allOk(callback: Function): Promise<void> {
+  /**
+   * Calls the callback with the results of stages when all stages run without errors.
+   */
+  async allOk(callback: CallbackAllOk): Promise<void> {
     const isSuccess = (result: IndexedStageResult) => {
       return !result.isError
     }
