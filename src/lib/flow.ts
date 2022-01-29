@@ -3,7 +3,13 @@ import { FlowMode } from './flow-mode'
 import { FlowOptions } from './flow-options'
 import { makeFlow, makeStageRunner } from '../factories'
 import { IFlow, IStageRunner } from '../contracts'
-import { CallbackOk, CallbackAllOk, CallbackAnyOk } from './callbacks'
+import {
+  CallbackOk,
+  CallbackAllOk,
+  CallbackAnyOk,
+  CallbackAllFail,
+  CallbackAnyFail,
+} from './callbacks'
 
 export class Flow<I extends any> {
   private stageExecutor: IStageRunner
@@ -49,8 +55,7 @@ export class Flow<I extends any> {
       })
 
     if (!indexedStageResult) {
-      const error = new Error(`No stage found for stageId ${stageId}`)
-      await callback(error)
+      await callback(undefined)
     } else {
       await callback(indexedStageResult.getValue())
     }
@@ -91,13 +96,53 @@ export class Flow<I extends any> {
     }
   }
 
-  // async fail(stageId: string, callback: Function): Promise<void> {
-  //   const stageResult = this.result.resultAll.find((result) => {
-  //     return result.id === stageId && result.state == 'fail'
-  //   })
-  //   if (!stageResult) {
-  //     throw new Error('here')
-  //   }
-  //   await callback(stageResult.data)
-  // }
+  /**
+   * Calls the callback with the error of the provided stage name or its index.
+   */
+  async fail(stageId: string | number, callback: Function): Promise<void> {
+    const indexedStageResult: IndexedStageResult | undefined =
+      this.result.resultAll.find((result) => {
+        return result.id === stageId && result.isError
+      })
+    if (!indexedStageResult) {
+      await callback(undefined)
+    } else {
+      await callback(indexedStageResult.getError())
+    }
+  }
+
+  /**
+   * Calls the callback with the errors of stages when any stage throws an exception.
+   */
+  async anyFail(callback: CallbackAnyFail): Promise<void> {
+    const isFailed = (result: IndexedStageResult) => {
+      return result.isError
+    }
+
+    const isAnyFailed = this.result.resultAll.some(isFailed)
+
+    if (isAnyFailed) {
+      await callback(
+        this.result.resultAll
+          .filter(isFailed)
+          .map((indexedResult) => indexedResult.getError()),
+      )
+    }
+  }
+
+  /**
+   * Calls the callback with the errors of stages when all stages throw exceptions.
+   */
+  async allFail(callback: CallbackAllFail): Promise<void> {
+    const isFail = (result: IndexedStageResult) => {
+      return result.isError
+    }
+    const isAllFailed = this.result.resultAll.every(isFail)
+
+    if (isAllFailed) {
+      await callback(
+        this.result.resultAll.map((indexedResult) => indexedResult.getError()),
+      )
+    }
+  }
 }
