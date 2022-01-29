@@ -1,6 +1,4 @@
-import { FlowOptions } from './../src/flow/entities/flow-options'
-import { Flow } from '../src'
-
+import { FlowOptions, Flow } from '../src'
 describe('Flow with default mode', () => {
   it('should execute when passing a single stage', async () => {
     const syncStageAlpha = {
@@ -201,7 +199,7 @@ describe('Flow with default mode', () => {
     })
   })
 
-  it('should not continue the flow on stage fail when isStoppable is true (by default)', async () => {
+  it('should continue the flow on stage fail when isStoppable is false (by default)', async () => {
     const syncStageAlpha = {
       handle: jest.fn().mockImplementation(() => {
         return Promise.reject(new Error('alpha stage error'))
@@ -221,12 +219,12 @@ describe('Flow with default mode', () => {
 
     const result = await sut.execute()
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledTimes(0)
+    expect(syncStageBeta.handle).toBeCalledTimes(1)
     expect(result).toEqual({
       result: {
-        error: new Error('alpha stage error'),
-        isError: true,
-        value: undefined,
+        error: undefined,
+        isError: false,
+        value: 'beta-result',
       },
       resultAll: [
         {
@@ -234,6 +232,12 @@ describe('Flow with default mode', () => {
           id: 0,
           isError: true,
           value: undefined,
+        },
+        {
+          error: undefined,
+          id: 1,
+          isError: false,
+          value: 'beta-result',
         },
       ],
     })
@@ -325,13 +329,13 @@ describe('Flow with default mode', () => {
 
     const result = await sut.execute()
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledTimes(0)
+    expect(syncStageBeta.handle).toBeCalledTimes(1)
 
     expect(result).toEqual({
       result: {
-        error: new Error('alpha stage error'),
-        isError: true,
-        value: undefined,
+        error: undefined,
+        isError: false,
+        value: 'beta-result',
       },
       resultAll: [
         {
@@ -339,6 +343,12 @@ describe('Flow with default mode', () => {
           id: 0,
           isError: true,
           value: undefined,
+        },
+        {
+          error: undefined,
+          id: 1,
+          isError: false,
+          value: 'beta-result',
         },
       ],
     })
@@ -366,37 +376,8 @@ describe('Flow with default mode', () => {
 
     const result = await sut.execute()
     expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledTimes(0)
+    expect(syncStageBeta.handle).toBeCalledTimes(1)
 
-    expect(result).toEqual({
-      result: {
-        error: new Error('alpha stage error'),
-        isError: true,
-        value: undefined,
-      },
-      resultAll: [
-        {
-          error: new Error('alpha stage error'),
-          id: 0,
-          isError: true,
-          value: undefined,
-        },
-      ],
-    })
-  })
-
-  it('should pass multiples parameters for the stage', async () => {
-    const syncStageAlpha = {
-      handle: jest.fn().mockReturnValue('alpha-result'),
-    }
-
-    const syncStageBeta = {
-      handle: jest.fn().mockReturnValue('beta-result'),
-    }
-
-    const sut = new Flow([syncStageAlpha.handle, syncStageBeta.handle])
-
-    const result = await sut.execute('email@email.com', 'admin')
     expect(result).toEqual({
       result: {
         error: undefined,
@@ -405,10 +386,10 @@ describe('Flow with default mode', () => {
       },
       resultAll: [
         {
-          error: undefined,
+          error: new Error('alpha stage error'),
           id: 0,
-          isError: false,
-          value: 'alpha-result',
+          isError: true,
+          value: undefined,
         },
         {
           error: undefined,
@@ -418,12 +399,6 @@ describe('Flow with default mode', () => {
         },
       ],
     })
-
-    expect(syncStageAlpha.handle).toBeCalledTimes(1)
-    expect(syncStageAlpha.handle).toBeCalledWith('email@email.com', 'admin')
-
-    expect(syncStageBeta.handle).toBeCalledTimes(1)
-    expect(syncStageBeta.handle).toBeCalledWith('email@email.com', 'admin')
   })
 
   it('should call success handler to get stage result by index', async () => {

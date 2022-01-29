@@ -10,7 +10,7 @@
   </body>
   <script>
     window.onload = function () {
-      const flow = new ComposableFlow([() => alert(1), () => alert(2)])
+      const flow = new Flow([() => console.log(1), () => console.log(2)])
 
       flow.execute().then((lastResult) => {
         console.log('done', lastResult)
