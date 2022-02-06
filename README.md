@@ -28,6 +28,14 @@ const flow = new Flow([emailValidator, new EmailSender().send])
 })()
 ```
 
+## Options
+
+| Option name  | Default value    | Description                                                                                                                                                                      | Possible values                     |     |
+| ------------ | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- | --- |
+| isStoppabble | false            | If flow should stop when an error occurs                                                                                                                                         | true,false                          |     |
+| isSafe       | true             | If should not thrown an exception when an error occurs                                                                                                                           | true,false                          |     |
+| mode         | FlowMode.DEFAULT | Defines how flow will be executed. DEFAULT: the stages run with same parameter passed on `execute` method. PIPELINE: the result of a stage is passed as parameter of next stage. | FlowMode.DEFAULT, FlowMode.PIPELINE |     |
+
 ## Passing parameters
 
 A Flow allow you to pass a single parameter to all stages in a single `execute` call.
