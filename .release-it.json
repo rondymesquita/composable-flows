@@ -14,15 +14,16 @@
     "requireUpstream": false,
     "requireCommits": false,
     "addUntrackedFiles": false,
-    "commit": false,
-    "tag": false,
-    "push": false
+    "commit": true,
+    "tag": true,
+    "push": true
   },
   "npm": {
     "publish": false
   },
   "github": {
-    "release": false
+    "release": true,
+    "tokenRef": "GH_TOKEN"
   },
   "gitlab": {
     "release": false
