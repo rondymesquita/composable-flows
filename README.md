@@ -128,41 +128,6 @@ await flow.ok('send email', (resultValue) => {
 })
 ```
 
-### Get the result without using callbacks
-
-If you don't want to use the callbacks and wants to handle the result by yourself.
-
-```ts
-const result = await flow.execute('email@email.com')
-console.log('result', result)
-```
-
-The resulting log is:
-
-```ts
-{
-  result: StageResult {
-    isError: false,
-    error: undefined,
-    value: 'E-mail sent to email@email.com'
-  },
-  resultAll: [
-    IndexedStageResult {
-      isError: false,
-      error: undefined,
-      value: true,
-      id: 0
-    },
-    IndexedStageResult {
-      isError: false,
-      error: undefined,
-      value: 'E-mail sent to email@email.com',
-      id: 1
-    }
-  ]
-}
-```
-
 ### **Error callbacks**
 
 Get the errors of stages when they all fail
@@ -207,6 +172,43 @@ await flow.fail('send email', (error) => {
 })
 ```
 
+### Get the result without using callbacks
+
+If you don't want to use the callbacks and wants to handle the result by yourself.
+
+```ts
+const result = await flow.execute('email@email.com')
+console.log('result', result)
+```
+
+The resulting log is:
+
+```ts
+{
+  result: StageResult {
+    isError: false,
+    error: undefined,
+    value: 'E-mail sent to email@email.com'
+  },
+  resultAll: [
+    IndexedStageResult {
+      isError: false,
+      error: undefined,
+      value: true,
+      id: 0
+    },
+    IndexedStageResult {
+      isError: false,
+      error: undefined,
+      value: 'E-mail sent to email@email.com',
+      id: 1
+    }
+  ]
+}
+```
+
+### Multiples callbacks
+
 You can use multiples callbacks in the same flow.
 
 ```ts
@@ -220,6 +222,8 @@ await flow.anyFail((errors) => {
   console.log(errors)
 })
 ```
+
+### Callbacks as promises
 
 Each callback call is a promise. This is because depending on you flow, you can wait or not for the callback completion. Let's suppose you have an express.js controller like that:
 
@@ -317,7 +321,7 @@ done
 
 Thus, this will make the callbacks to be resolved, before continuing the execution.
 
-### Exception handling
+## Exception handling
 
 By default, Flow will never thrown an exception. To handle exception and get the errors, you should use the proper callbacks: `fail`, `anyFail` and `allFail`.
 
@@ -362,7 +366,7 @@ const flow = new Flow([emailValidator, new EmailSender().send], options)
 > new Flow([])
 > ```
 
-### Stop flow
+## Stop the flow
 
 By default, if an exception occurs, the flow will never stop, unless you say so with `isStoppable: true`.
 
@@ -395,7 +399,7 @@ const flow = new Flow([emailValidator, new EmailSender().send], options)
 })()
 ```
 
-### Pipeline mode
+## Pipeline mode
 
 By default, the parameter passed on `execute` function, is used to call each stage.
 
@@ -488,7 +492,7 @@ flow.execute({ email: 'email@email.com' }).then((result) => {
 > new Flow([])
 > ```
 
-### Advanced usage
+## Advanced usage
 
 Some way you can use Flow.
 
