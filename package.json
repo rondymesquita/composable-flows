@@ -4,7 +4,7 @@
   "description": "Compose flows with readable interface",
   "main": "./dist/node/index.js",
   "files": [
-    "dist/**/*"
+    "dist/node/*"
   ],
   "scripts": {
     "test": "jest",

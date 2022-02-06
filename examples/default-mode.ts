@@ -6,16 +6,18 @@ function emailValidator(email: string) {
 }
 
 class EmailSender {
-  async send(email: string): Promise<boolean> {
+  async send(email: string): Promise<string> {
     console.log('>> 2. email sent')
-    return true
+    return Promise.resolve(`E-mail sent to ${email}`)
   }
 }
 
-const emailSender = new EmailSender()
+const flow = new Flow([emailValidator, new EmailSender().send])
 
-const flow = new Flow([emailValidator, emailSender.send])
+;(async () => {
+  await flow.execute('email@email.com')
 
-flow.execute('email@email.com').then((result) => {
-  console.log('done', result)
-})
+  await flow.allOk((resultValues) => {
+    console.log(resultValues)
+  })
+})()
