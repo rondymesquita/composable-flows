@@ -1,8 +1,8 @@
-import { Flow } from '../src'
+import { Flow, FlowOptions } from '../src'
 
 function emailValidator(email: string) {
   console.log('>> 1. validating email', email)
-  return true
+  throw new Error('Error on validating user')
 }
 
 class EmailSender {
@@ -12,12 +12,19 @@ class EmailSender {
   }
 }
 
-const flow = new Flow([emailValidator, new EmailSender().send])
+const options: FlowOptions = {
+  isStoppable: true,
+}
+const flow = new Flow([emailValidator, new EmailSender().send], options)
 
 ;(async () => {
   await flow.execute('email@email.com')
 
-  await flow.allOk((resultValues) => {
+  await flow.anyOk((resultValues) => {
     console.log(resultValues)
+  })
+
+  await flow.anyFail((errors) => {
+    console.log(errors)
   })
 })()

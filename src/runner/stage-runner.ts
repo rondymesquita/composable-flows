@@ -14,9 +14,9 @@ export class StageRunner implements IStageRunner {
         stageResult = (await stageFunction()) as any
       }
     } catch (err: any) {
-      console.warn(err)
+      // console.warn('[FLOW WARN]', err)
       if (!this.options.isSafe) {
-        console.error(err)
+        // console.error('[FLOW ERROR]', err)
         throw err
       }
       return StageResult.fail(err)

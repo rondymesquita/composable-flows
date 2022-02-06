@@ -15,9 +15,6 @@ class EmailSender {
 const flow = new Flow([emailValidator, new EmailSender().send])
 
 ;(async () => {
-  await flow.execute('email@email.com')
-
-  await flow.allOk((resultValues) => {
-    console.log(resultValues)
-  })
+  const result = await flow.execute('email@email.com')
+  console.log(result)
 })()

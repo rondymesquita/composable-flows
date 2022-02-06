@@ -2,15 +2,20 @@ import { Flow, FlowMode } from '../src'
 
 interface UserInput {
   email: string
-  role: string
+}
+
+interface User {
+  id: number
+  email: string
+}
+
+interface Event {
+  name: string
+  datetime: Date
 }
 export class GetUserInfo {
-  get(userInput: UserInput): any {
-    console.log(
-      '>> 1.1 getting user email:[%s] role:[%s]',
-      userInput.email,
-      userInput.email,
-    )
+  get(userInput: UserInput): User {
+    console.log('1. getting user information:[%s]', userInput.email)
     return {
       id: 1,
       email: userInput.email,
@@ -19,31 +24,23 @@ export class GetUserInfo {
 }
 
 export class EmailSender {
-  async send(userInfo: any): Promise<any> {
-    console.log('>> 2.1. sending email to userInfo:%o', userInfo)
-
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        console.log('>> 2.2. email sent:[%s]', userInfo.email)
-        resolve({
-          event: 'email',
-          userID: userInfo.id,
-        })
-      }, 300)
+  async send(user: User): Promise<Event> {
+    console.log('2. sending email:[%s]', user.email)
+    return Promise.resolve({
+      name: 'email',
+      datetime: new Date(),
     })
   }
 }
 
 export class Database {
-  async storeLog(log: any): Promise<boolean> {
-    console.log('>> 3.1. storing log for event:[%s]', log.event)
-
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        console.log('>> 3.2. log saved id:[%s]', log.userID)
-        resolve(true)
-      }, 300)
-    })
+  async storeEvent(event: Event): Promise<boolean> {
+    console.log(
+      '3. storing log for event:[%s] at [%s]',
+      event.name,
+      event.datetime,
+    )
+    return Promise.resolve(true)
   }
 }
 
@@ -55,11 +52,11 @@ const options = {
   mode: FlowMode.PIPELINE,
 }
 
-const flow = new Flow(
-  [getUserInfo.get, emailSender.send, database.storeLog],
+const flow = new Flow<UserInput>(
+  [getUserInfo.get, emailSender.send, database.storeEvent],
   options,
 )
 
-flow.execute({ email: 'email@email.com', role: 'admin' }).then((lastResult) => {
-  console.log('done', lastResult)
+flow.execute({ email: 'email@email.com' }).then((result) => {
+  console.log('done', JSON.stringify(result, null, 2))
 })

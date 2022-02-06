@@ -1,6 +1,6 @@
 {
   "name": "composable-flows",
-  "version": "1.10.0",
+  "version": "0.0.1",
   "description": "Compose flows with readable interface",
   "main": "./dist/node/index.js",
   "files": [
