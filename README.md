@@ -2,6 +2,8 @@
 
 Compose flows and use cases using functions.
 
+[Check docs.](https://rondymesquita.github.io/composable-flows/)
+
 ```ts
 import { Flow } from 'composable-flows'
 
@@ -89,7 +91,7 @@ const result = await flow.execute('email@email.com')
 
 ## Stages
 
-Each step of flow (each item of the array) is called Stage.
+Each step of flow (each item of the array) is called `Stage`.
 Stages can be functions or methods.
 
 ```ts
