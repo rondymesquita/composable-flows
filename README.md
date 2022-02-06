@@ -3,7 +3,7 @@
 Compose flows and use cases using functions.
 
 ```ts
-import { Flow } from '../src'
+import { Flow } from 'composable-flows'
 
 function emailValidator(email: string) {
   console.log('>> 1. validating email', email)
@@ -28,7 +28,7 @@ const flow = new Flow([emailValidator, new EmailSender().send])
 })()
 ```
 
-### Passing parameters
+## Passing parameters
 
 A Flow allow you to pass a single parameter to all stages in a single `execute` call.
 The same parameter is injected in all stages.
@@ -49,7 +49,7 @@ class EmailSender {
 }
 ```
 
-### Using promises?
+## Using promises?
 
 The `execute` method returns a promise.
 
@@ -61,7 +61,7 @@ flow.execute('email@email.com').then((result) => {})
 const result = await flow.execute('email@email.com')
 ```
 
-### Stages
+## Stages
 
 Each step of flow (each item of the array) is called Stage.
 Stages can be functions or methods.
@@ -79,12 +79,12 @@ const example = new Example()
 const flow = new Flow([simpleFunction, example.method])
 ```
 
-### Callbacks
+## Callbacks
 
 Flow comes with callbacks to handle the flow result.
 This is useful to leverage exeception handling and increate code readability.
 
-#### **Success callbacks**
+### **Success callbacks**
 
 Get the result of all stage when they all run successfully
 
@@ -128,7 +128,42 @@ await flow.ok('send email', (resultValue) => {
 })
 ```
 
-#### **Error callbacks**
+### Get the result without using callbacks
+
+If you don't want to use the callbacks and wants to handle the result by yourself.
+
+```ts
+const result = await flow.execute('email@email.com')
+console.log('result', result)
+```
+
+The resulting log is:
+
+```ts
+{
+  result: StageResult {
+    isError: false,
+    error: undefined,
+    value: 'E-mail sent to email@email.com'
+  },
+  resultAll: [
+    IndexedStageResult {
+      isError: false,
+      error: undefined,
+      value: true,
+      id: 0
+    },
+    IndexedStageResult {
+      isError: false,
+      error: undefined,
+      value: 'E-mail sent to email@email.com',
+      id: 1
+    }
+  ]
+}
+```
+
+### **Error callbacks**
 
 Get the errors of stages when they all fail
 
@@ -281,3 +316,129 @@ done
 ```
 
 Thus, this will make the callbacks to be resolved, before continuing the execution.
+
+### Exception handling
+
+By default, Flow will never thrown an exception. To handle exception and get the errors, you should use the proper callbacks: `fail`, `anyFail` and `allFail`.
+
+But, if you want the handle the exception by yourself, you just simply need to pass the option `isSafe: false` and use `try/catch` for that.
+
+If `isSafe` is `false` and an exeception occurs, the flow will be interrupted.
+
+```ts
+function emailValidator(email: string) {
+  console.log('>> 1. validating email', email)
+  throw new Error('Error on validating user')
+}
+
+class EmailSender {
+  async send(email: string): Promise<string> {
+    console.log('>> 2. email sent')
+    return Promise.resolve(`E-mail sent to ${email}`)
+  }
+}
+
+const options: FlowOptions = {
+  isSafe: false,
+}
+const flow = new Flow([emailValidator, new EmailSender().send], options)
+
+;(async () => {
+  try {
+    const result = await flow.execute('email@email.com')
+    console.log('result', result)
+  } catch (error) {
+    console.log((error as Error).message)
+  }
+})()
+```
+
+> Note
+>
+> ```ts
+> // This
+> new Flow([], { isSafe: true })
+> // is equivalent to
+> new Flow([])
+> ```
+
+### Pipeline mode
+
+By default, the parameter passed on `execute` function, is used to call each stage.
+
+With pipeline mode, the result of a stage is used as parameter of the next stage.
+
+```ts
+import { Flow, FlowMode } from 'composable-flows'
+
+interface UserInput {
+  email: string
+}
+
+interface User {
+  id: number
+  email: string
+}
+
+interface Event {
+  name: string
+  datetime: Date
+}
+
+export class GetUserInfo {
+  get(userInput: UserInput): User {
+    console.log('1. getting user information:[%s]', userInput.email)
+    return {
+      id: 1,
+      email: userInput.email,
+    }
+  }
+}
+
+export class EmailSender {
+  async send(user: User): Promise<Event> {
+    console.log('2. sending email:[%s]', user.email)
+    return Promise.resolve({
+      name: 'email',
+      datetime: new Date(),
+    })
+  }
+}
+
+export class Database {
+  async storeEvent(event: Event): Promise<boolean> {
+    console.log(
+      '3. storing log for event:[%s] at [%s]',
+      event.name,
+      event.datetime,
+    )
+    return Promise.resolve(true)
+  }
+}
+
+const getUserInfo = new GetUserInfo()
+const emailSender = new EmailSender()
+const database = new Database()
+
+const options = {
+  mode: FlowMode.PIPELINE,
+}
+
+const flow = new Flow<UserInput>(
+  [getUserInfo.get, emailSender.send, database.storeEvent],
+  options,
+)
+
+flow.execute({ email: 'email@email.com' }).then((result) => {
+  console.log('done', JSON.stringify(result, null, 2))
+})
+```
+
+> Note
+>
+> ```ts
+> // This
+> new Flow([], { mode: FlowMode.DEFAULT })
+> // is equivalent to
+> new Flow([])
+> ```
