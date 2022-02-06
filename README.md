@@ -26,6 +26,26 @@ const flow = new Flow([emailValidator, new EmailSender().send])
 })()
 ```
 
+## Import/Require
+
+Import
+
+```ts
+import { Flow, FlowMode } from 'composable-flows'
+```
+
+Require
+
+```js
+const { Flow, FlowMode } = require('composable-flows')
+```
+
+Browser
+
+```html
+<script src="dist/browser/index.js"></script>
+```
+
 ## Options
 
 | Option name  | Default value    | Description                                                                                                                                                                      | Possible values                     |     |
