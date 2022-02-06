@@ -29,3 +29,6 @@ jobs:
         with:
           branch: gh-pages-docs # The branch the action should deploy to.
           folder: ./docs # The folder the action should deploy.
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
