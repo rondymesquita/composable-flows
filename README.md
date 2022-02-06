@@ -82,7 +82,7 @@ const flow = new Flow([simpleFunction, example.method])
 ## Callbacks
 
 Flow comes with callbacks to handle the flow result.
-This is useful to leverage exeception handling and increate code readability.
+This is useful to leverage exeception handling and increase code readability.
 
 ### **Success callbacks**
 
@@ -362,11 +362,51 @@ const flow = new Flow([emailValidator, new EmailSender().send], options)
 > new Flow([])
 > ```
 
+### Stop flow
+
+By default, if an exception occurs, the flow will never stop, unless you say so with `isStoppable: true`.
+
+```ts
+function emailValidator(email: string) {
+  console.log('>> 1. validating email', email)
+  throw new Error('Error on validating user')
+}
+
+class EmailSender {
+  async send(email: string): Promise<string> {
+    console.log('>> 2. email sent')
+    return Promise.resolve(`E-mail sent to ${email}`)
+  }
+}
+
+const options: FlowOptions = {
+  isStoppable: true,
+}
+const flow = new Flow([emailValidator, new EmailSender().send], options)
+
+;(async () => {
+  await flow.execute('email@email.com')
+
+  // EmailSender().send was never executed since emailValidator throws an exeception
+
+  await flow.anyFail((errors) => {
+    console.log(errors)
+  })
+})()
+```
+
 ### Pipeline mode
 
 By default, the parameter passed on `execute` function, is used to call each stage.
 
-With pipeline mode, the result of a stage is used as parameter of the next stage.
+With PIPELINE mode, the result of a stage is used as parameter of the next stage.
+
+In this mode, the parameter passed on `execute` is used only in the first stage.
+
+Also, in PIPELINE mode, if an exception occurs, the flow is interrupted.
+Since the result of a stage is used as parameter of next, in case of exeception, the next stage cannot have the result of a failed stage.
+
+So, in PIPELINE mode, `isStoppable` is always `true`.
 
 ```ts
 import { Flow, FlowMode } from 'composable-flows'
@@ -388,6 +428,8 @@ interface Event {
 export class GetUserInfo {
   get(userInput: UserInput): User {
     console.log('1. getting user information:[%s]', userInput.email)
+
+    // this result will be input of EmailSender.send
     return {
       id: 1,
       email: userInput.email,
@@ -398,6 +440,8 @@ export class GetUserInfo {
 export class EmailSender {
   async send(user: User): Promise<Event> {
     console.log('2. sending email:[%s]', user.email)
+
+    // this result will be input of Database.storeEvent
     return Promise.resolve({
       name: 'email',
       datetime: new Date(),
@@ -429,6 +473,7 @@ const flow = new Flow<UserInput>(
   options,
 )
 
+// This parameter will be passed only to the first stage
 flow.execute({ email: 'email@email.com' }).then((result) => {
   console.log('done', JSON.stringify(result, null, 2))
 })
@@ -441,4 +486,66 @@ flow.execute({ email: 'email@email.com' }).then((result) => {
 > new Flow([], { mode: FlowMode.DEFAULT })
 > // is equivalent to
 > new Flow([])
+> ```
+
+### Advanced usage
+
+Some way you can use Flow.
+
+```ts
+function emailValidator(email: string) {
+  console.log('validating email', email)
+  return true
+}
+
+class EmailSender {
+  async send(email: string): Promise<string> {
+    console.log('email sent to %s', email)
+    return Promise.resolve(`E-mail sent to ${email}`)
+  }
+}
+
+const emailSender = new EmailSender()
+const flow = new Flow([
+  // normal function
+  emailValidator,
+
+  // method
+  emailSender.send,
+
+  // bind function
+  emailSender.send.bind(emailSender, 'email@another.com'),
+
+  // an anonymous function
+  (email: string) => {
+    const newEmail = email.replace('@email.com', '@completelydifferent.com')
+    emailSender.send(newEmail)
+    return 'DONE'
+  },
+])
+
+;(async () => {
+  await flow.execute('email@email.com')
+
+  await flow.allOk((resultValues) => {
+    console.log(resultValues)
+  })
+})()
+```
+
+> Note
+
+> When using PIPELINE mode, the anonymous functions are required to return the value since it will be used as input of next stage.
+
+> ```ts
+> const flow = new Flow([
+>   // an anonymous function
+>   (email: string) => {
+>     const newEmail = email.replace('@email.com', '@different.com')
+>     const response = emailSender.send(newEmail)
+>
+>     // Remember to return here, when needed
+>     return response
+>   },
+> ])
 > ```
