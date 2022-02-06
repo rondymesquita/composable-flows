@@ -83,7 +83,7 @@ The `execute` method returns a promise.
 // using `then`
 flow.execute('email@email.com').then((result) => {})
 
-// or async/await
+// or using async/await
 const result = await flow.execute('email@email.com')
 ```
 

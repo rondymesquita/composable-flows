@@ -9,7 +9,7 @@
     }
   },
   "git": {
-    "requireCleanWorkingDir": false,
+    "requireCleanWorkingDir": true,
     "requireBranch": false,
     "requireUpstream": false,
     "requireCommits": false,
