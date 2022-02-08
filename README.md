@@ -385,7 +385,7 @@ const flow = new Flow([emailValidator, new EmailSender().send], options)
 })()
 ```
 
-> Note
+> ### Note
 >
 > ```ts
 > // This
@@ -511,7 +511,7 @@ flow.execute({ email: 'email@email.com' }).then((result) => {
 })
 ```
 
-> Note
+> ### Note
 >
 > ```ts
 > // This
@@ -565,10 +565,10 @@ const flow = new Flow([
 })()
 ```
 
-> Note
-
+> ### Note
+>
 > When using PIPELINE mode, the anonymous functions are required to return the value since it will be used as input of next stage.
-
+>
 > ```ts
 > const flow = new Flow([
 >   // an anonymous function
