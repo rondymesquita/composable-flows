@@ -2,6 +2,14 @@
   "name": "composable-flows",
   "version": "1.0.2",
   "description": "Compose flows with readable interface",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rondymesquita/composable-flows.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rondymesquita/composable-flows/issues"
+  },
+  "homepage": "https://github.com/rondymesquita/composable-flows#readme",
   "main": "./dist/node/index.js",
   "files": [
     "dist/**/*"
